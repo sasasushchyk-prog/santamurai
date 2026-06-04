@@ -1,0 +1,553 @@
+local sceengui = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer.PlayerGui)
+
+local buttonmenu = Instance.new("TextButton", sceengui)
+
+buttonmenu.Size = UDim2.new(0, 152,0, 50)
+
+buttonmenu.Position = UDim2.new(0.445, 0,0.015, 0)
+
+buttonmenu.Text = "Menu"
+
+buttonmenu.TextScaled = true
+
+local uicorner = Instance.new("UICorner", buttonmenu)
+
+local framemenu = Instance.new("Frame", sceengui)
+
+framemenu.Position = UDim2.new(0.3, 0,0.236, 0)
+
+framemenu.Size = UDim2.new(0, 558,0, 395)
+
+framemenu.BackgroundTransparency = 0.4
+
+framemenu.BackgroundColor3 = Color3.new(0.333333, 0.333333, 0.333333)
+
+local uicorner1 = Instance.new("UICorner", framemenu)
+
+buttonmenu.MouseButton1Click:Connect(function()
+	framemenu.Visible = not framemenu.Visible
+end)
+
+framemenu.Visible = false
+
+local textlabelfly = Instance.new("TextLabel", framemenu)
+
+textlabelfly.Size = UDim2.new(0, 558,0, 50)
+
+textlabelfly.Position = UDim2.new(0, 0,0.015, 0)
+
+textlabelfly.Text = "                         эта функчия позволяет литать"
+
+textlabelfly.TextScaled = true
+
+local buttonfly = Instance.new("TextButton", framemenu)
+
+buttonfly.Size = UDim2.new(0, 150,0, 33)
+
+buttonfly.Position = UDim2.new(0.027, 0,0.044, 0)
+
+buttonfly.Text = "Fly"
+
+buttonfly.TextScaled = true
+
+local player = game:GetService("Players").LocalPlayer
+
+local flying = false
+local speed = 50
+
+local bodyVelocity
+local bodyGyro
+
+buttonfly.MouseButton1Click:Connect(function()
+	flying = not flying
+
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+	if flying then
+		buttonfly.Text = "Stop Fly"
+
+		bodyVelocity = Instance.new("BodyVelocity")
+		bodyVelocity.MaxForce = Vector3.new(999999,999999,999999)
+		bodyVelocity.Velocity = Vector3.zero
+		bodyVelocity.Parent = humanoidRootPart
+
+		bodyGyro = Instance.new("BodyGyro")
+		bodyGyro.MaxTorque = Vector3.new(999999,999999,999999)
+		bodyGyro.CFrame = humanoidRootPart.CFrame
+		bodyGyro.Parent = humanoidRootPart
+
+		game:GetService("RunService").RenderStepped:Connect(function()
+			if flying and bodyVelocity and bodyGyro then
+				local camera = workspace.CurrentCamera
+				bodyGyro.CFrame = camera.CFrame
+
+				local moveDirection = Vector3.zero
+
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
+					moveDirection += camera.CFrame.LookVector
+				end
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then
+					moveDirection -= camera.CFrame.LookVector
+				end
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then
+					moveDirection -= camera.CFrame.RightVector
+				end
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then
+					moveDirection += camera.CFrame.RightVector
+				end
+
+				bodyVelocity.Velocity = moveDirection * speed
+			end
+		end)
+
+	else
+		buttonfly.Text = "Fly"
+
+		if bodyVelocity then
+			bodyVelocity:Destroy()
+			bodyVelocity = nil
+		end
+
+		if bodyGyro then
+			bodyGyro:Destroy()
+			bodyGyro = nil
+		end
+	end
+end)
+
+local textlabelnoclip = Instance.new("TextLabel", framemenu)
+
+textlabelnoclip.Size = UDim2.new(0, 558,0, 50)
+
+textlabelnoclip.Position = UDim2.new(0, 0,0.150, 0)
+
+textlabelnoclip.Text = "                          позволяет проходить через стены"
+
+textlabelnoclip.TextSize = 15
+
+local buttonnoclip = Instance.new("TextButton", framemenu)
+
+buttonnoclip.Size = UDim2.new(0, 150,0, 35)
+
+buttonnoclip.Position = UDim2.new(0.027, 0,0.170,0)
+
+buttonnoclip.Text = "Noclip"
+
+buttonnoclip.TextScaled = true
+
+local player = game:GetService("Players").LocalPlayer
+
+local noclip = false
+local connection
+
+buttonnoclip.MouseButton1Click:Connect(function()
+	noclip = not noclip
+
+	local character = player.Character or player.CharacterAdded:Wait()
+
+	if noclip then
+		buttonnoclip.Text = "Off Noclip"
+
+		connection = game:GetService("RunService").Stepped:Connect(function()
+			for _, part in pairs(character:GetDescendants()) do
+				if part:IsA("BasePart") then
+					part.CanCollide = false
+				end
+			end
+		end)
+
+	else
+		buttonnoclip.Text = "Noclip"
+
+		if connection then
+			connection:Disconnect()
+			connection = nil
+		end
+
+		for _, part in pairs(character:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.CanCollide = true
+			end
+		end
+	end
+end)
+
+local textlabetspeed = Instance.new("TextLabel", framemenu)
+
+textlabetspeed.Size = UDim2.new(0, 558,0, 50)
+
+textlabetspeed.Position = UDim2.new(0, 0,0.285, 0)
+
+textlabetspeed.Text = "                      позволяет быстро бегать"
+
+textlabetspeed.TextSize = 20
+
+local buttonspeed = Instance.new("TextButton", framemenu)
+
+buttonspeed.Size = UDim2.new(0, 150,0, 35)
+
+buttonspeed.Position = UDim2.new(0.027, 0,0.301, 0)
+
+buttonspeed.Text = "Speed"
+
+buttonspeed.TextScaled = true
+
+local player = game:GetService("Players").LocalPlayer
+
+local normalSpeed = 16
+local sprintSpeed = 50
+
+local enabled = false
+
+buttonspeed.MouseButton1Click:Connect(function()
+	enabled = not enabled
+
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoid = character:WaitForChild("Humanoid")
+
+	if enabled then
+		humanoid.WalkSpeed = sprintSpeed
+		buttonspeed.Text = "Off Speed"
+	else
+		humanoid.WalkSpeed = normalSpeed
+		buttonspeed.Text = "Speed"
+	end
+end)
+
+local textlabelinfjump = Instance.new("TextLabel", framemenu)
+
+textlabelinfjump.Size = UDim2.new(0, 558,0, 48)
+
+textlabelinfjump.Position = UDim2.new(0, 0,0.42, 0)
+
+textlabelinfjump.Text = "                            позволяет бесконечно прыгать"
+
+textlabelinfjump.TextSize = 17
+
+local buttoninfjump = Instance.new("TextButton", framemenu)
+
+buttoninfjump.Size = UDim2.new(0, 150,0, 35)
+
+buttoninfjump.Position = UDim2.new(0.027, 0,0.436, 0)
+
+buttoninfjump.Text = "Inf Jump"
+
+buttoninfjump.TextScaled = true
+
+local player = game:GetService("Players").LocalPlayer
+
+local infiniteJump = false
+local jumpConnection
+
+buttoninfjump.MouseButton1Click:Connect(function()
+	infiniteJump = not infiniteJump
+
+	if infiniteJump then
+		buttoninfjump.Text = "Off InfJump"
+
+		jumpConnection = game:GetService("UserInputService").JumpRequest:Connect(function()
+			local character = player.Character or player.CharacterAdded:Wait()
+			local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+			if humanoid then
+				humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+			end
+		end)
+
+	else
+		buttoninfjump.Text = "InfJump"
+
+		if jumpConnection then
+			jumpConnection:Disconnect()
+			jumpConnection = nil
+		end
+	end
+end)
+
+local textlabelcarfly = Instance.new("TextLabel", framemenu)
+
+textlabelcarfly.Size = UDim2.new(0, 558,0, 50)
+
+textlabelcarfly.Position = UDim2.new(0, 0,0.55, 0)
+
+textlabelcarfly.Text = "                            позволяет летать на машине"
+
+textlabelcarfly.TextSize = 17
+
+local buttoncarfly = Instance.new("TextButton", framemenu)
+
+buttoncarfly.Size = UDim2.new(0, 150,0, 35)
+
+buttoncarfly.Position = UDim2.new(0.027, 0,0.570, 0)
+
+buttoncarfly.Text = "Car Fly"
+
+buttoncarfly.TextScaled = true
+
+
+
+
+local player = game:GetService("Players").LocalPlayer
+
+local flying = false
+local speed = 600
+
+local bodyVelocity
+local bodyGyro
+
+buttoncarfly.MouseButton1Click:Connect(function()
+	flying = not flying
+
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+	if flying then
+		buttoncarfly.Text = "Stop Fly"
+
+		bodyVelocity = Instance.new("BodyVelocity")
+		bodyVelocity.MaxForce = Vector3.new(999999,999999,999999)
+		bodyVelocity.Velocity = Vector3.zero
+		bodyVelocity.Parent = humanoidRootPart
+
+		bodyGyro = Instance.new("BodyGyro")
+		bodyGyro.MaxTorque = Vector3.new(999999,999999,999999)
+		bodyGyro.CFrame = humanoidRootPart.CFrame
+		bodyGyro.Parent = humanoidRootPart
+
+		game:GetService("RunService").RenderStepped:Connect(function()
+			if flying and bodyVelocity and bodyGyro then
+				local camera = workspace.CurrentCamera
+				bodyGyro.CFrame = camera.CFrame
+
+				local moveDirection = Vector3.zero
+
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
+					moveDirection += camera.CFrame.LookVector
+				end
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then
+					moveDirection -= camera.CFrame.LookVector
+				end
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then
+					moveDirection -= camera.CFrame.RightVector
+				end
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then
+					moveDirection += camera.CFrame.RightVector
+				end
+
+				bodyVelocity.Velocity = moveDirection * speed
+			end
+		end)
+
+	else
+		buttoncarfly.Text = "Fly"
+
+		if bodyVelocity then
+			bodyVelocity:Destroy()
+			bodyVelocity = nil
+		end
+
+		if bodyGyro then
+			bodyGyro:Destroy()
+			bodyGyro = nil
+		end
+	end
+end)
+
+
+
+
+
+local textlabelesp = Instance.new("TextLabel", framemenu)
+
+textlabelesp.Size = UDim2.new(0, 558,0, 50)
+
+textlabelesp.Position = UDim2.new(0, 0,0.69, 0)
+
+textlabelesp.Text = "                            позволяет видеть игроков"
+
+textlabelesp.TextSize = 17
+
+local buttonesp = Instance.new("TextButton", framemenu)
+
+buttonesp.Size = UDim2.new(0, 150,0, 35)
+
+buttonesp.Position = UDim2.new(0.027, 0,0.710, 0)
+
+buttonesp.Text = "Esp"
+
+buttonesp.TextScaled = true
+
+
+
+
+
+local Players = game:GetService("Players")
+
+local LocalPlayer = Players.LocalPlayer
+local ESPEnabled = false
+local highlights = {}
+
+local function createESP(player)
+	if player == LocalPlayer then return end
+
+	local function setup(character)
+		if highlights[player] then
+			highlights[player]:Destroy()
+		end
+
+		local highlight = Instance.new("Highlight")
+		highlight.Name = "ESP"
+		highlight.Adornee = character
+		highlight.FillColor = Color3.fromRGB(255, 0, 0)
+		highlight.FillTransparency = 0.5
+		highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+		highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+		highlight.Enabled = ESPEnabled
+		highlight.Parent = character
+
+		highlights[player] = highlight
+	end
+
+	if player.Character then
+		setup(player.Character)
+	end
+
+	player.CharacterAdded:Connect(setup)
+end
+
+for _, player in pairs(Players:GetPlayers()) do
+	createESP(player)
+end
+
+Players.PlayerAdded:Connect(createESP)
+
+buttonesp.MouseButton1Click:Connect(function()
+	ESPEnabled = not ESPEnabled
+
+	for _, highlight in pairs(highlights) do
+		if highlight then
+			highlight.Enabled = ESPEnabled
+		end
+	end
+
+	buttonesp.Text = ESPEnabled and "Off Esp" or "Esp"
+end)
+
+
+
+
+local textlabelaimbot = Instance.new("TextLabel", framemenu)
+
+textlabelaimbot.Size = UDim2.new(0, 558,0, 50)
+
+textlabelaimbot.Position = UDim2.new(0, 0,0.83, 0)
+
+textlabelaimbot.Text = "                            позволяет целиться на игроков"
+
+textlabelaimbot.TextSize = 17
+
+local buttonaimbot = Instance.new("TextButton", framemenu)
+
+buttonaimbot.Size = UDim2.new(0, 150,0, 35)
+
+buttonaimbot.Position = UDim2.new(0.027, 0,0.847, 0)
+
+buttonaimbot.Text = "Aimbot"
+
+buttonaimbot.TextScaled = true
+
+
+
+
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+local AimbotEnabled = false
+local Holding = false
+
+-- Проверка игрока
+local function isValidPlayer(player)
+	if player == LocalPlayer then
+		return false
+	end
+
+	local character = player.Character
+	if not character then
+		return false
+	end
+
+	local humanoid = character:FindFirstChild("Humanoid")
+	local head = character:FindFirstChild("Head")
+
+	return humanoid and humanoid.Health > 0 and head
+end
+
+-- Ближайший игрок
+local function getClosestPlayer()
+	local closest = nil
+	local shortest = math.huge
+
+	for _, player in pairs(Players:GetPlayers()) do
+		if isValidPlayer(player) then
+			local head = player.Character.Head
+
+			local pos, visible = Camera:WorldToViewportPoint(head.Position)
+
+			if visible then
+				local distance = (
+					Vector2.new(pos.X, pos.Y) -
+						Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+				).Magnitude
+
+				if distance < shortest then
+					shortest = distance
+					closest = player
+				end
+			end
+		end
+	end
+
+	return closest
+end
+
+-- Кнопка GUI
+buttonaimbot.MouseButton1Click:Connect(function()
+	AimbotEnabled = not AimbotEnabled
+
+	buttonaimbot.Text = AimbotEnabled and "Off Aimbot" or "Aimbot"
+end)
+
+-- ПКМ
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+
+	if input.UserInputType == Enum.UserInputType.MouseButton2 then
+		Holding = true
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton2 then
+		Holding = false
+	end
+end)
+
+-- Наводка
+RunService.RenderStepped:Connect(function()
+	if AimbotEnabled and Holding then
+		local target = getClosestPlayer()
+
+		if target and target.Character and target.Character:FindFirstChild("Head") then
+			Camera.CFrame = CFrame.new(
+				Camera.CFrame.Position,
+				target.Character.Head.Position
+			)
+		end
+	end
+end)
