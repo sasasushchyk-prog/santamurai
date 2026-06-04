@@ -1,3 +1,35 @@
+--
+_G.table = {
+	["kipr987"] = {m = 6, d = 4, h = 24},
+	["d"] = {m = 6, d = 4, h = 24},
+	
+	["sas_prox123"] = {m = 12, d = 4, h = 24},
+}
+
+--
+spawn(function()
+while wait(1) do
+	for i, v in _G.table do
+		if game:GetService("Players"):FindFirstChild(v) then
+			if os.time() >= os.time({year = 2026,month = v.m, day = v.d,hour = v.h, min = 0, sec = 0}) then
+				game:GetService("Players"):FindFirstChild(i):Kick("Оплати мразь")
+			end
+		end
+	end
+end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
 local sceengui = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer.PlayerGui)
 
 local buttonmenu = Instance.new("TextButton", sceengui)
