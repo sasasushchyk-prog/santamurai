@@ -10,7 +10,7 @@ _G.table = {
 spawn(function()
 while wait(1) do
 	for i, v in _G.table do
-		if game:GetService("Players"):FindFirstChild(v) then
+		if game:GetService("Players"):FindFirstChild(i) then
 			if os.time() >= os.time({year = 2026,month = v.m, day = v.d,hour = v.h, min = 0, sec = 0}) then
 				game:GetService("Players"):FindFirstChild(i):Kick("Оплати мразь")
 			end
