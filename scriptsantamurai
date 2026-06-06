@@ -1,10 +1,10 @@
---
+
 _G.table = {
 	["kipr987"] = {m = 6, d = 4, h = 24},
 	["d"] = {m = 6, d = 4, h = 24},
 }
 
---
+
 spawn(function()
 while wait(1) do
 	for i, v in _G.table do
@@ -34,7 +34,7 @@ local buttonmenu = Instance.new("TextButton", sceengui)
 
 buttonmenu.Size = UDim2.new(0, 152,0, 50)
 
-buttonmenu.Position = UDim2.new(0.445, 0,0.015, 0)
+buttonmenu.Position = UDim2.new(0.450, 0,0.0001, 0)
 
 buttonmenu.Text = "Menu"
 
@@ -66,19 +66,140 @@ textlabelfly.Size = UDim2.new(0, 558,0, 50)
 
 textlabelfly.Position = UDim2.new(0, 0,0.015, 0)
 
-textlabelfly.Text = "                         эта функчия позволяет литать"
+textlabelfly.BackgroundTransparency = 0.4
 
-textlabelfly.TextScaled = true
+textlabelfly.Text = "Fly - Полет                                                                  "
+
+textlabelfly.TextSize = 15
 
 local buttonfly = Instance.new("TextButton", framemenu)
 
-buttonfly.Size = UDim2.new(0, 150,0, 33)
+buttonfly.Size = UDim2.new(0, 100,0, 33)
 
-buttonfly.Position = UDim2.new(0.027, 0,0.044, 0)
+buttonfly.BackgroundTransparency = 0.4
 
-buttonfly.Text = "Fly"
+buttonfly.Position = UDim2.new(0.800, 0,0.040, 0)
+
+buttonfly.Text = "ON"
 
 buttonfly.TextScaled = true
+
+
+
+local bindfly = Instance.new("TextButton", framemenu)
+
+bindfly.Size = UDim2.new(0, 100,0, 33)
+
+bindfly.BackgroundTransparency = 0.4
+
+bindfly.Position = UDim2.new(0.600, 0,0.040, 0)
+
+bindfly.Text = "[]"
+
+
+local bind
+
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+local bindKey = Enum.KeyCode.F
+local waitingForBind = false
+
+local flying = false
+local bodyVelocity
+local bodyGyro
+local flyConnection
+
+bindfly.Text = "" .. bindKey.Name
+
+bindfly.MouseButton1Click:Connect(function()
+	waitingForBind = true
+	bindfly.Text = "Нажми клавишу"
+end)
+
+local function startFlying()
+	local character = player.Character
+	if not character then return end
+
+	local hrp = character:WaitForChild("HumanoidRootPart")
+
+	bodyVelocity = Instance.new("BodyVelocity")
+	bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+	bodyVelocity.Parent = hrp
+
+	bodyGyro = Instance.new("BodyGyro")
+	bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+	bodyGyro.Parent = hrp
+
+	flyConnection = RunService.RenderStepped:Connect(function()
+		local camera = workspace.CurrentCamera
+
+		bodyGyro.CFrame = camera.CFrame
+
+		local moveDirection = Vector3.zero
+
+		if UIS:IsKeyDown(Enum.KeyCode.W) then
+			moveDirection += camera.CFrame.LookVector
+		end
+
+		if UIS:IsKeyDown(Enum.KeyCode.S) then
+			moveDirection -= camera.CFrame.LookVector
+		end
+
+		if UIS:IsKeyDown(Enum.KeyCode.A) then
+			moveDirection -= camera.CFrame.RightVector
+		end
+
+		if UIS:IsKeyDown(Enum.KeyCode.D) then
+			moveDirection += camera.CFrame.RightVector
+		end
+
+		bodyVelocity.Velocity = moveDirection * 60
+	end)
+end
+
+local function stopFlying()
+	if bodyVelocity then
+		bodyVelocity:Destroy()
+	end
+
+	if bodyGyro then
+		bodyGyro:Destroy()
+	end
+
+	if flyConnection then
+		flyConnection:Disconnect()
+	end
+end
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+
+	if waitingForBind then
+		if input.KeyCode ~= Enum.KeyCode.Unknown then
+			bindKey = input.KeyCode
+			bindfly.Text = "" .. bindKey.Name
+			waitingForBind = false
+		end
+
+		return
+	end
+
+	if input.KeyCode == bindKey then
+		flying = not flying
+
+		if flying then
+			startFlying()
+		else
+			stopFlying()
+		end
+	end
+end)
+
+
 
 local player = game:GetService("Players").LocalPlayer
 
@@ -150,21 +271,124 @@ local textlabelnoclip = Instance.new("TextLabel", framemenu)
 
 textlabelnoclip.Size = UDim2.new(0, 558,0, 50)
 
+textlabelnoclip.BackgroundTransparency = 0.4
+
 textlabelnoclip.Position = UDim2.new(0, 0,0.150, 0)
 
-textlabelnoclip.Text = "                          позволяет проходить через стены"
+textlabelnoclip.Text = "NoClip - Проход сквозь стены                                       "
 
 textlabelnoclip.TextSize = 15
 
 local buttonnoclip = Instance.new("TextButton", framemenu)
 
-buttonnoclip.Size = UDim2.new(0, 150,0, 35)
+buttonnoclip.Size = UDim2.new(0, 100,0, 33)
 
-buttonnoclip.Position = UDim2.new(0.027, 0,0.170,0)
+buttonnoclip.BackgroundTransparency = 0.4
 
-buttonnoclip.Text = "Noclip"
+buttonnoclip.Position = UDim2.new(0.800, 0,0.170, 0)
+
+buttonnoclip.Text = "ON"
 
 buttonnoclip.TextScaled = true
+
+
+
+
+local bindnoclip = Instance.new("TextButton", framemenu)
+
+bindnoclip.Size = UDim2.new(0, 100,0, 33)
+
+bindnoclip.BackgroundTransparency = 0.4
+
+bindnoclip.Position = UDim2.new(0.600, 0,0.170, 0)
+
+bindnoclip.Text = "[]"
+
+
+
+
+
+
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+local bindKey = Enum.KeyCode.N
+local waitingForBind = false
+
+local noclip = false
+local noclipConnection
+
+bindnoclip.Text = "" .. bindKey.Name
+
+bindnoclip.MouseButton1Click:Connect(function()
+	waitingForBind = true
+	bindnoclip.Text = "Нажми клавишу"
+end)
+
+local function startNoclip()
+	noclipConnection = RunService.Stepped:Connect(function()
+		local character = player.Character
+
+		if character then
+			for _, part in pairs(character:GetDescendants()) do
+				if part:IsA("BasePart") then
+					part.CanCollide = false
+				end
+			end
+		end
+	end)
+end
+
+local function stopNoclip()
+	if noclipConnection then
+		noclipConnection:Disconnect()
+	end
+
+	local character = player.Character
+
+	if character then
+		for _, part in pairs(character:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.CanCollide = true
+			end
+		end
+	end
+end
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+
+	if waitingForBind then
+		if input.KeyCode ~= Enum.KeyCode.Unknown then
+			bindKey = input.KeyCode
+			bindnoclip.Text = "" .. bindKey.Name
+			waitingForBind = false
+		end
+
+		return
+	end
+
+	if input.KeyCode == bindKey then
+		noclip = not noclip
+
+		if noclip then
+			startNoclip()
+		else
+			stopNoclip()
+		end
+	end
+end)
+
+
+
+
+
+
+
+
 
 local player = game:GetService("Players").LocalPlayer
 
@@ -207,21 +431,102 @@ local textlabetspeed = Instance.new("TextLabel", framemenu)
 
 textlabetspeed.Size = UDim2.new(0, 558,0, 50)
 
+textlabetspeed.BackgroundTransparency = 0.4
+
 textlabetspeed.Position = UDim2.new(0, 0,0.285, 0)
 
-textlabetspeed.Text = "                      позволяет быстро бегать"
+textlabetspeed.Text = "Speed - Бег                                                                    "
 
-textlabetspeed.TextSize = 20
+textlabetspeed.TextSize = 15
 
 local buttonspeed = Instance.new("TextButton", framemenu)
 
-buttonspeed.Size = UDim2.new(0, 150,0, 35)
+buttonspeed.Size = UDim2.new(0, 100,0, 33)
 
-buttonspeed.Position = UDim2.new(0.027, 0,0.301, 0)
+buttonspeed.BackgroundTransparency = 0.4
 
-buttonspeed.Text = "Speed"
+buttonspeed.Position = UDim2.new(0.800, 0,0.305, 0)
+
+buttonspeed.Text = "ON"
 
 buttonspeed.TextScaled = true
+
+
+
+local bindspeed = Instance.new("TextButton", framemenu)
+
+bindspeed.Size = UDim2.new(0, 100,0, 33)
+
+bindspeed.BackgroundTransparency = 0.4
+
+bindspeed.Position = UDim2.new(0.600, 0,0.305, 0)
+
+bindspeed.Text = "[]"
+
+
+
+
+
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+
+local bindKey = Enum.KeyCode.X
+local waitingForBind = false
+
+local speedEnabled = false
+local normalSpeed = 16
+local speedValue = 50
+
+bindspeed.Text = "" .. bindKey.Name
+
+bindspeed.MouseButton1Click:Connect(function()
+	waitingForBind = true
+	bindspeed.Text = "Нажми клавишу"
+end)
+
+local function setSpeed(value)
+	local character = player.Character
+
+	if character then
+		local humanoid = character:FindFirstChild("Humanoid")
+
+		if humanoid then
+			humanoid.WalkSpeed = value
+		end
+	end
+end
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+
+	if waitingForBind then
+		if input.KeyCode ~= Enum.KeyCode.Unknown then
+			bindKey = input.KeyCode
+			button.Text = "" .. bindKey.Name
+			waitingForBind = false
+		end
+
+		return
+	end
+
+	if input.KeyCode == bindKey then
+		speedEnabled = not speedEnabled
+
+		if speedEnabled then
+			setSpeed(speedValue)
+		else
+			setSpeed(normalSpeed)
+		end
+	end
+end)
+
+
+
+
+
+
 
 local player = game:GetService("Players").LocalPlayer
 
@@ -249,21 +554,98 @@ local textlabelinfjump = Instance.new("TextLabel", framemenu)
 
 textlabelinfjump.Size = UDim2.new(0, 558,0, 48)
 
+textlabelinfjump.BackgroundTransparency = 0.4
+
 textlabelinfjump.Position = UDim2.new(0, 0,0.42, 0)
 
-textlabelinfjump.Text = "                            позволяет бесконечно прыгать"
+textlabelinfjump.Text = "InfJump - Бесконечный прыжок                                     "
 
-textlabelinfjump.TextSize = 17
+textlabelinfjump.TextSize = 15
 
 local buttoninfjump = Instance.new("TextButton", framemenu)
 
-buttoninfjump.Size = UDim2.new(0, 150,0, 35)
+buttoninfjump.Size = UDim2.new(0, 100,0, 33)
 
-buttoninfjump.Position = UDim2.new(0.027, 0,0.436, 0)
+buttoninfjump.BackgroundTransparency = 0.4
 
-buttoninfjump.Text = "Inf Jump"
+buttoninfjump.Position = UDim2.new(0.800, 0,0.436, 0)
+
+
+buttoninfjump.Text = "ON"
 
 buttoninfjump.TextScaled = true
+
+
+local bindinfjump = Instance.new("TextButton", framemenu)
+
+bindinfjump.Size = UDim2.new(0, 100,0, 33)
+
+bindinfjump.BackgroundTransparency = 0.4
+
+bindinfjump.Position = UDim2.new(0.600, 0,0.436, 0)
+
+bindinfjump.Text = "[]"
+
+
+
+
+
+
+
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+
+local bindKey = Enum.KeyCode.J
+local waitingForBind = false
+
+local infJump = false
+
+bindinfjump.Text = "" .. bindKey.Name
+
+bindinfjump.MouseButton1Click:Connect(function()
+	waitingForBind = true
+	bindinfjump.Text = "Нажми клавишу"
+end)
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+
+	if waitingForBind then
+		if input.KeyCode ~= Enum.KeyCode.Unknown then
+			bindKey = input.KeyCode
+			bindinfjump.Text = "" .. bindKey.Name
+			waitingForBind = false
+		end
+
+		return
+	end
+
+	if input.KeyCode == bindKey then
+		infJump = not infJump
+	end
+
+	if infJump and input.KeyCode == Enum.KeyCode.Space then
+		local character = player.Character
+
+		if character then
+			local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+			if humanoid then
+				humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+			end
+		end
+	end
+end)
+
+
+
+
+
+
+
+
 
 local player = game:GetService("Players").LocalPlayer
 
@@ -581,3 +963,24 @@ RunService.RenderStepped:Connect(function()
 		end
 	end
 end)
+
+
+
+
+
+
+
+local UIS = game:GetService("UserInputService")
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+
+	if input.KeyCode == Enum.KeyCode.T then
+		framemenu.Visible = not framemenu.Visible
+	end
+end)
+
+
+
+
+
