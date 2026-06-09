@@ -11,7 +11,7 @@ spawn(function()
 			if game:GetService("Players"):FindFirstChild(i) then
 				is = true
 				if os.time() >= os.time({year = 2026,month = v.m, day = v.d,hour = v.h, min = 0, sec = 0}) then
-					game:GetService("Players"):FindFirstChild(i):Kick("Оплати мразь")
+					game:GetService("Players"):FindFirstChild(i):Kick("Please buy the script")
 				end
 			end
 		end
