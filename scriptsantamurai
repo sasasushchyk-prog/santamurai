@@ -1131,7 +1131,7 @@ buttonaimbot.TextScaled = true
 
 
 
-local bindaimbot = Instance.new("TextLabel", framemenu)
+local bindaimbot = Instance.new("TextButton", framemenu)
 
 bindaimbot.Size = UDim2.new(0, 100,0, 33)
 
@@ -1227,7 +1227,7 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 	if waitingForBind then
 		if input.KeyCode ~= Enum.KeyCode.Unknown then
 			bindKey = input.KeyCode
-			button.Text = "" .. bindKey.Name
+			bindaimbot.Text = "" .. bindKey.Name
 			waitingForBind = false
 		end
 
