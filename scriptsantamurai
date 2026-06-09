@@ -16,7 +16,7 @@ spawn(function()
 			end
 		end
 		if is == false then
-			game:GetService("Players").LocalPlayer:Kick("Оплати мразь")
+			game:GetService("Players").LocalPlayer:Kick("Please buy the script")
 		end
 	end
 end)
