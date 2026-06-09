@@ -31,23 +31,28 @@ end)
 
 
 
-local sceengui = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer.PlayerGui)
+local screengui = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer.PlayerGui)
 
-local buttonmenu = Instance.new("TextButton", sceengui)
+local imagebuttonmenu = Instance.new("ImageButton", screengui)
 
-buttonmenu.Size = UDim2.new(0, 152,0, 50)
+imagebuttonmenu.Size = UDim2.new(0, 50,0, 50)
 
-buttonmenu.Position = UDim2.new(0.450, 0,0.0001, 0)
+imagebuttonmenu.Position = UDim2.new(0.450, 0,0.0001, 0)
 
-buttonmenu.Text = "Menu"
+imagebuttonmenu.BackgroundTransparency = 0.4
 
-buttonmenu.TextScaled = true
+imagebuttonmenu.Image = "http://www.roblox.com/asset/?id=1003379313"
 
-local uicorner = Instance.new("UICorner", buttonmenu)
 
-local framemenu = Instance.new("Frame", sceengui)
+local uicorner = Instance.new("UICorner", imagebuttonmenu)
 
-framemenu.Position = UDim2.new(0.3, 0,0.236, 0)
+local framemenu = Instance.new("Frame", screengui)
+
+
+
+
+
+framemenu.Position = UDim2.new(0.26, 0,0.236, 0)
 
 framemenu.Size = UDim2.new(0, 558,0, 395)
 
@@ -57,7 +62,7 @@ framemenu.BackgroundColor3 = Color3.new(0.333333, 0.333333, 0.333333)
 
 local uicorner1 = Instance.new("UICorner", framemenu)
 
-buttonmenu.MouseButton1Click:Connect(function()
+imagebuttonmenu.MouseButton1Click:Connect(function()
 	framemenu.Visible = not framemenu.Visible
 end)
 
@@ -108,7 +113,7 @@ local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 
-local bindKey = Enum.KeyCode.F
+local bindKey = nil
 local waitingForBind = false
 
 local flying = false
@@ -116,8 +121,7 @@ local bodyVelocity
 local bodyGyro
 local flyConnection
 
-bindfly.Text = "" .. bindKey.Name
-
+bindfly.Text = "-"
 bindfly.MouseButton1Click:Connect(function()
 	waitingForBind = true
 	bindfly.Text = "Нажми клавишу"
@@ -318,13 +322,13 @@ local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 
-local bindKey = Enum.KeyCode.N
+local bindKey = nil
 local waitingForBind = false
 
 local noclip = false
 local noclipConnection
 
-bindnoclip.Text = "" .. bindKey.Name
+bindnoclip.Text = "-"
 
 bindnoclip.MouseButton1Click:Connect(function()
 	waitingForBind = true
@@ -475,14 +479,14 @@ local Players = game:GetService("Players")
 
 local player = Players.LocalPlayer
 
-local bindKey = Enum.KeyCode.X
+local bindKey = nil
 local waitingForBind = false
 
 local speedEnabled = false
 local normalSpeed = 16
 local speedValue = 50
 
-bindspeed.Text = "" .. bindKey.Name
+bindspeed.Text = "-"
 
 bindspeed.MouseButton1Click:Connect(function()
 	waitingForBind = true
@@ -507,7 +511,7 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 	if waitingForBind then
 		if input.KeyCode ~= Enum.KeyCode.Unknown then
 			bindKey = input.KeyCode
-			button.Text = "" .. bindKey.Name
+			bindspeed.Text = "" .. bindKey.Name
 			waitingForBind = false
 		end
 
@@ -600,12 +604,12 @@ local Players = game:GetService("Players")
 
 local player = Players.LocalPlayer
 
-local bindKey = Enum.KeyCode.J
+local bindKey = nil
 local waitingForBind = false
 
 local infJump = false
 
-bindinfjump.Text = "" .. bindKey.Name
+bindinfjump.Text = "-"
 
 bindinfjump.MouseButton1Click:Connect(function()
 	waitingForBind = true
@@ -813,7 +817,7 @@ local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 
-local bindKey = Enum.KeyCode.C
+local bindKey = nil
 local waitingForBind = false
 
 local flying = false
@@ -823,7 +827,7 @@ local bodyVelocity
 local bodyGyro
 local flyConnection
 
-bindcarfly.Text = "" .. bindKey.Name
+bindcarfly.Text = "-"
 
 -- настройка бинда
 bindcarfly.MouseButton1Click:Connect(function()
@@ -896,7 +900,7 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 	if waitingForBind then
 		if input.KeyCode ~= Enum.KeyCode.Unknown then
 			bindKey = input.KeyCode
-			button.Text = "" .. bindKey.Name
+			bindcarfly.Text = "" .. bindKey.Name
 			waitingForBind = false
 		end
 
@@ -928,21 +932,141 @@ local textlabelesp = Instance.new("TextLabel", framemenu)
 
 textlabelesp.Size = UDim2.new(0, 558,0, 50)
 
-textlabelesp.Position = UDim2.new(0, 0,0.69, 0)
+textlabelesp.Position = UDim2.new(0, 0,0.68, 0)
 
-textlabelesp.Text = "                            позволяет видеть игроков"
+textlabelesp.BackgroundTransparency = 0.4
 
-textlabelesp.TextSize = 17
+textlabelesp.Text = "ESP - Подсвечивает игроков                                        "
+
+textlabelesp.TextSize = 15
 
 local buttonesp = Instance.new("TextButton", framemenu)
 
-buttonesp.Size = UDim2.new(0, 150,0, 35)
+buttonesp.Size = UDim2.new(0, 100,0, 33)
 
-buttonesp.Position = UDim2.new(0.027, 0,0.710, 0)
+buttonesp.Position = UDim2.new(0.800, 0,0.700, 0)
 
-buttonesp.Text = "Esp"
+buttonesp.BackgroundTransparency = 0.4
+
+buttonesp.Text = "ON"
 
 buttonesp.TextScaled = true
+
+
+
+
+
+
+
+
+local bindesp = Instance.new("TextButton", framemenu)
+
+bindesp.Size = UDim2.new(0, 100,0, 33)
+
+bindesp.BackgroundTransparency = 0.4
+
+bindesp.Position = UDim2.new(0.600, 0,0.700, 0)
+
+bindesp.Text = "[]"
+
+
+
+
+
+
+
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+
+local bindKey = nil
+local waitingForBind = false
+
+local espEnabled = false
+
+bindesp.Text = "-"
+
+-- настройка бинда
+bindesp.MouseButton1Click:Connect(function()
+	waitingForBind = true
+	bindesp.Text = "Нажми клавишу"
+end)
+
+-- включение ESP
+local function enableESP()
+	for _, plr in pairs(Players:GetPlayers()) do
+		if plr ~= player and plr.Character then
+
+			if not plr.Character:FindFirstChild("ESPHighlight") then
+				local highlight = Instance.new("Highlight")
+				highlight.Name = "ESPHighlight"
+				highlight.FillTransparency = 0.5
+				highlight.OutlineTransparency = 0
+				highlight.Parent = plr.Character
+			end
+		end
+	end
+end
+
+-- выключение ESP
+local function disableESP()
+	for _, plr in pairs(Players:GetPlayers()) do
+		if plr.Character then
+			local highlight = plr.Character:FindFirstChild("ESPHighlight")
+
+			if highlight then
+				highlight:Destroy()
+			end
+		end
+	end
+end
+
+-- новые игроки
+Players.PlayerAdded:Connect(function(plr)
+	plr.CharacterAdded:Connect(function(character)
+		task.wait(1)
+
+		if espEnabled and plr ~= player then
+			local highlight = Instance.new("Highlight")
+			highlight.Name = "ESPHighlight"
+			highlight.FillTransparency = 0.5
+			highlight.OutlineTransparency = 0
+			highlight.Parent = character
+		end
+	end)
+end)
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+
+	-- установка клавиши
+	if waitingForBind then
+		if input.KeyCode ~= Enum.KeyCode.Unknown then
+			bindKey = input.KeyCode
+			bindesp.Text = "" .. bindKey.Name
+			waitingForBind = false
+		end
+
+		return
+	end
+
+	-- включение ESP
+	if bindKey and input.KeyCode == bindKey then
+		espEnabled = not espEnabled
+
+		if espEnabled then
+			enableESP()
+		else
+			disableESP()
+		end
+	end
+end)
+
+
+
+
+
 
 
 
@@ -1007,21 +1131,153 @@ local textlabelaimbot = Instance.new("TextLabel", framemenu)
 
 textlabelaimbot.Size = UDim2.new(0, 558,0, 50)
 
-textlabelaimbot.Position = UDim2.new(0, 0,0.83, 0)
+textlabelaimbot.Position = UDim2.new(0, 0,0.816, 0)
 
-textlabelaimbot.Text = "                            позволяет целиться на игроков"
+textlabelaimbot.BackgroundTransparency = 0.4
 
-textlabelaimbot.TextSize = 17
+
+textlabelaimbot.Text = "Aimbot - целится в игрока                                            "  
+
+textlabelaimbot.TextSize = 15
 
 local buttonaimbot = Instance.new("TextButton", framemenu)
 
-buttonaimbot.Size = UDim2.new(0, 150,0, 35)
+buttonaimbot.Size = UDim2.new(0, 100,0, 33)
 
-buttonaimbot.Position = UDim2.new(0.027, 0,0.847, 0)
+buttonaimbot.Position = UDim2.new(0.800, 0,0.835, 0)
 
-buttonaimbot.Text = "Aimbot"
+buttonaimbot.Text = "ON"
+
+buttonaimbot.BackgroundTransparency = 0.4
 
 buttonaimbot.TextScaled = true
+
+
+
+
+
+
+
+
+local bindaimbot = Instance.new("TextLabel", framemenu)
+
+bindaimbot.Size = UDim2.new(0, 100,0, 33)
+
+bindaimbot.Position = UDim2.new(0.600, 0,0.835, 0)
+
+bindaimbot.Text = "-"
+
+bindaimbot.BackgroundTransparency = 0.4
+
+
+
+
+
+
+
+
+
+
+
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+local bindKey = nil
+local waitingForBind = false
+
+local aimbotEnabled = false
+local aimConnection
+
+bindaimbot.Text = "-"
+
+-- выбор клавиши
+bindaimbot.MouseButton1Click:Connect(function()
+	waitingForBind = true
+	bindaimbot.Text = "Нажми клавишу"
+end)
+
+-- поиск ближайшего игрока
+local function getClosestPlayer()
+	local closestPlayer = nil
+	local shortestDistance = math.huge
+
+	for _, plr in pairs(Players:GetPlayers()) do
+		if plr ~= player and plr.Character and plr.Character:FindFirstChild("Head") then
+
+			local head = plr.Character.Head
+
+			local screenPos, visible = camera:WorldToViewportPoint(head.Position)
+
+			if visible then
+				local mousePos = UIS:GetMouseLocation()
+
+				local distance = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+
+				if distance < shortestDistance then
+					shortestDistance = distance
+					closestPlayer = plr
+				end
+			end
+		end
+	end
+
+	return closestPlayer
+end
+
+local function startAimbot()
+	aimConnection = RunService.RenderStepped:Connect(function()
+		local target = getClosestPlayer()
+
+		if target and target.Character and target.Character:FindFirstChild("Head") then
+			camera.CFrame = CFrame.new(
+				camera.CFrame.Position,
+				target.Character.Head.Position
+			)
+		end
+	end)
+end
+
+local function stopAimbot()
+	if aimConnection then
+		aimConnection:Disconnect()
+		aimConnection = nil
+	end
+end
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+
+	-- установка бинда
+	if waitingForBind then
+		if input.KeyCode ~= Enum.KeyCode.Unknown then
+			bindKey = input.KeyCode
+			button.Text = "" .. bindKey.Name
+			waitingForBind = false
+		end
+
+		return
+	end
+
+	-- включение / выключение
+	if bindKey and input.KeyCode == bindKey then
+		aimbotEnabled = not aimbotEnabled
+
+		if aimbotEnabled then
+			startAimbot()
+		else
+			stopAimbot()
+		end
+	end
+end)
+
+
+
+
+
 
 
 
