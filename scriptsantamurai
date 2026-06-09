@@ -1,36 +1,3 @@
-_G.table = {
-	["kipr987"] = {m = 7, d = 4, h = 24},
-	["sas_prox123"] = {m = 12, d = 4, h = 24},
-}
-
-
-spawn(function()
-	local is = false
-	while wait(1) do
-		for i, v in _G.table do
-			if game:GetService("Players"):FindFirstChild(i) then
-				is = true
-				if os.time() >= os.time({year = 2026,month = v.m, day = v.d,hour = v.h, min = 0, sec = 0}) then
-					game:GetService("Players"):FindFirstChild(i):Kick("Please buy the script")
-				end
-			end
-		end
-		if is == false then
-			game:GetService("Players").LocalPlayer:Kick("Please buy the script")
-		end
-	end
-end)
-
-
-
-
-
-
-
-
-
-
-
 local screengui = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer.PlayerGui)
 
 local imagebuttonmenu = Instance.new("ImageButton", screengui)
@@ -47,6 +14,11 @@ imagebuttonmenu.Image = "http://www.roblox.com/asset/?id=1003379313"
 local uicorner = Instance.new("UICorner", imagebuttonmenu)
 
 local framemenu = Instance.new("Frame", screengui)
+
+
+
+
+screengui.ResetOnSpawn = false
 
 
 
@@ -1392,10 +1364,3 @@ end)
 
 
 
-
-
-local character = player.Character or player.CharacterAdded:Wait()
-
-player.CharacterAdded:Connect(function(newCharacter)
-	character = newCharacter
-end)
