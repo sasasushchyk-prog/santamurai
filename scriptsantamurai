@@ -1394,3 +1394,8 @@ end)
 
 
 
+local character = player.Character or player.CharacterAdded:Wait()
+
+player.CharacterAdded:Connect(function(newCharacter)
+	character = newCharacter
+end)
