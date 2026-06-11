@@ -1,569 +1,180 @@
-local screengui = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer.PlayerGui)
+_G.list = {
+    ["kipr987"] = {m = 10,d=15,h=0}
+}
 
-local imagebuttonmenu = Instance.new("ImageButton", screengui)
+loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
 
-imagebuttonmenu.Size = UDim2.new(0, 50,0, 50)
+local gui = _G.lib:Window("Santamurai")
+local tab = gui:Tab("LocalPlayer")
 
-imagebuttonmenu.Position = UDim2.new(0.450, 0,0.0001, 0)
+local visualtab = gui:Tab("Visual")
 
-imagebuttonmenu.BackgroundTransparency = 0.4
+local skintab = gui:Tab("Skin")
 
-imagebuttonmenu.Image = "http://www.roblox.com/asset/?id=1003379313"
+local pvptab = gui:Tab("PVP")
 
+local cartab = gui:Tab("Car")
 
-local uicorner = Instance.new("UICorner", imagebuttonmenu)
-
-local framemenu = Instance.new("Frame", screengui)
-
-
-
-
-screengui.ResetOnSpawn = false
-
-
-
-
-
-framemenu.Position = UDim2.new(0.26, 0,0.236, 0)
-
-framemenu.Size = UDim2.new(0, 558,0, 395)
-
-framemenu.BackgroundTransparency = 0.4
-
-framemenu.BackgroundColor3 = Color3.new(0.333333, 0.333333, 0.333333)
-
-local uicorner1 = Instance.new("UICorner", framemenu)
-
-imagebuttonmenu.MouseButton1Click:Connect(function()
-	framemenu.Visible = not framemenu.Visible
-end)
-
-framemenu.Visible = false
-
-local textlabelfly = Instance.new("TextLabel", framemenu)
-
-textlabelfly.Size = UDim2.new(0, 558,0, 50)
-
-textlabelfly.Position = UDim2.new(0, 0,0.015, 0)
-
-textlabelfly.BackgroundTransparency = 0.4
-
-textlabelfly.Text = "Fly - Полет                                                                  "
-
-textlabelfly.TextSize = 15
-
-local buttonfly = Instance.new("TextButton", framemenu)
-
-buttonfly.Size = UDim2.new(0, 100,0, 33)
-
-buttonfly.BackgroundTransparency = 0.4
-
-buttonfly.Position = UDim2.new(0.800, 0,0.040, 0)
-
-buttonfly.Text = "ON"
-
-buttonfly.TextScaled = true
-
-
-
-local bindfly = Instance.new("TextButton", framemenu)
-
-bindfly.Size = UDim2.new(0, 100,0, 33)
-
-bindfly.BackgroundTransparency = 0.4
-
-bindfly.Position = UDim2.new(0.600, 0,0.040, 0)
-
-bindfly.Text = "[]"
-
-
-local bind
-
-local UIS = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
-
-local bindKey = nil
-local waitingForBind = false
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
 local flying = false
-local bodyVelocity
-local bodyGyro
+local flySpeed = 15
+
+local bv
+local bg
 local flyConnection
 
-bindfly.Text = "-"
-bindfly.MouseButton1Click:Connect(function()
-	waitingForBind = true
-	bindfly.Text = "Нажми клавишу"
+local control = {
+    F = 0,
+    B = 0,
+    L = 0,
+    R = 0
+}
+
+-- Управление
+UIS.InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+
+    if input.KeyCode == Enum.KeyCode.W then
+        control.F = 1
+    elseif input.KeyCode == Enum.KeyCode.S then
+        control.B = -1
+    elseif input.KeyCode == Enum.KeyCode.A then
+        control.L = -1
+    elseif input.KeyCode == Enum.KeyCode.D then
+        control.R = 1
+    end
 end)
 
-local function startFlying()
-	local character = player.Character
-	if not character then return end
-
-	local hrp = character:WaitForChild("HumanoidRootPart")
-
-	bodyVelocity = Instance.new("BodyVelocity")
-	bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-	bodyVelocity.Parent = hrp
-
-	bodyGyro = Instance.new("BodyGyro")
-	bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-	bodyGyro.Parent = hrp
-
-	flyConnection = RunService.RenderStepped:Connect(function()
-		local camera = workspace.CurrentCamera
-
-		bodyGyro.CFrame = camera.CFrame
-
-		local moveDirection = Vector3.zero
-
-		if UIS:IsKeyDown(Enum.KeyCode.W) then
-			moveDirection += camera.CFrame.LookVector
-		end
-
-		if UIS:IsKeyDown(Enum.KeyCode.S) then
-			moveDirection -= camera.CFrame.LookVector
-		end
-
-		if UIS:IsKeyDown(Enum.KeyCode.A) then
-			moveDirection -= camera.CFrame.RightVector
-		end
-
-		if UIS:IsKeyDown(Enum.KeyCode.D) then
-			moveDirection += camera.CFrame.RightVector
-		end
-
-		bodyVelocity.Velocity = moveDirection * 60
-	end)
-end
-
-local function stopFlying()
-	if bodyVelocity then
-		bodyVelocity:Destroy()
-	end
-
-	if bodyGyro then
-		bodyGyro:Destroy()
-	end
-
-	if flyConnection then
-		flyConnection:Disconnect()
-	end
-end
-
-UIS.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-
-	if waitingForBind then
-		if input.KeyCode ~= Enum.KeyCode.Unknown then
-			bindKey = input.KeyCode
-			bindfly.Text = "" .. bindKey.Name
-			waitingForBind = false
-		end
-
-		return
-	end
-
-	if input.KeyCode == bindKey then
-		flying = not flying
-
-		if flying then
-			startFlying()
-		else
-			stopFlying()
-		end
-	end
+UIS.InputEnded:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.W then
+        control.F = 0
+    elseif input.KeyCode == Enum.KeyCode.S then
+        control.B = 0
+    elseif input.KeyCode == Enum.KeyCode.A then
+        control.L = 0
+    elseif input.KeyCode == Enum.KeyCode.D then
+        control.R = 0
+    end
 end)
 
+-- Fly Toggle
+tab:Toggle("Fly", false, function(value)
+    flying = value
 
+    if flying then
+        character = player.Character or player.CharacterAdded:Wait()
+        humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
-local player = game:GetService("Players").LocalPlayer
+        bv = Instance.new("BodyVelocity")
+        bv.MaxForce = Vector3.new(999999,999999,999999)
+        bv.Velocity = Vector3.zero
+        bv.Parent = humanoidRootPart
 
-local flying = false
-local speed = 50
+        bg = Instance.new("BodyGyro")
+        bg.MaxTorque = Vector3.new(999999,999999,999999)
+        bg.P = 1000
+        bg.Parent = humanoidRootPart
 
-local bodyVelocity
-local bodyGyro
+        flyConnection = RunService.RenderStepped:Connect(function()
+            local camera = workspace.CurrentCamera
+            local direction =
+                (camera.CFrame.LookVector * (control.F + control.B)) +
+                (camera.CFrame.RightVector * (control.R + control.L))
 
-buttonfly.MouseButton1Click:Connect(function()
-	flying = not flying
+            bv.Velocity = direction * flySpeed
+            bg.CFrame = camera.CFrame
+        end)
 
-	local character = player.Character or player.CharacterAdded:Wait()
-	local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    else
+        if flyConnection then
+            flyConnection:Disconnect()
+        end
 
-	if flying then
-		buttonfly.Text = "Stop Fly"
+        if bv then
+            bv:Destroy()
+        end
 
-		bodyVelocity = Instance.new("BodyVelocity")
-		bodyVelocity.MaxForce = Vector3.new(999999,999999,999999)
-		bodyVelocity.Velocity = Vector3.zero
-		bodyVelocity.Parent = humanoidRootPart
-
-		bodyGyro = Instance.new("BodyGyro")
-		bodyGyro.MaxTorque = Vector3.new(999999,999999,999999)
-		bodyGyro.CFrame = humanoidRootPart.CFrame
-		bodyGyro.Parent = humanoidRootPart
-
-		game:GetService("RunService").RenderStepped:Connect(function()
-			if flying and bodyVelocity and bodyGyro then
-				local camera = workspace.CurrentCamera
-				bodyGyro.CFrame = camera.CFrame
-
-				local moveDirection = Vector3.zero
-
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
-					moveDirection += camera.CFrame.LookVector
-				end
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then
-					moveDirection -= camera.CFrame.LookVector
-				end
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then
-					moveDirection -= camera.CFrame.RightVector
-				end
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then
-					moveDirection += camera.CFrame.RightVector
-				end
-
-				bodyVelocity.Velocity = moveDirection * speed
-			end
-		end)
-
-	else
-		buttonfly.Text = "Fly"
-
-		if bodyVelocity then
-			bodyVelocity:Destroy()
-			bodyVelocity = nil
-		end
-
-		if bodyGyro then
-			bodyGyro:Destroy()
-			bodyGyro = nil
-		end
-	end
+        if bg then
+            bg:Destroy()
+        end
+    end
 end)
 
-local textlabelnoclip = Instance.new("TextLabel", framemenu)
+-- Slider скорости
+tab:Slider("Fly Speed", 0, 100, 15, function(value)
+    flySpeed = value
+end)
 
-textlabelnoclip.Size = UDim2.new(0, 558,0, 50)
+-- tab:Label("Santamurai TOP")
 
-textlabelnoclip.BackgroundTransparency = 0.4
+-- tab:Button("Название кнопки", function()
 
-textlabelnoclip.Position = UDim2.new(0, 0,0.150, 0)
+-- end)
 
-textlabelnoclip.Text = "NoClip - Проход сквозь стены                                       "
+-- tab:Textbox("Название вводить", "Enter", function(value)
 
-textlabelnoclip.TextSize = 15
+-- end)
 
-local buttonnoclip = Instance.new("TextButton", framemenu)
+-- local list = {1,2,3,4,5,6}
 
-buttonnoclip.Size = UDim2.new(0, 100,0, 33)
+-- tab:Dropdown("Название таблицы", list, function(value)
 
-buttonnoclip.BackgroundTransparency = 0.4
-
-buttonnoclip.Position = UDim2.new(0.800, 0,0.170, 0)
-
-buttonnoclip.Text = "ON"
-
-buttonnoclip.TextScaled = true
-
-
-
-
-local bindnoclip = Instance.new("TextButton", framemenu)
-
-bindnoclip.Size = UDim2.new(0, 100,0, 33)
-
-bindnoclip.BackgroundTransparency = 0.4
-
-bindnoclip.Position = UDim2.new(0.600, 0,0.170, 0)
-
-bindnoclip.Text = "[]"
+-- end)
 
 
 
 
 
 
-local UIS = game:GetService("UserInputService")
+
+
+
+
+
+
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
 
-local bindKey = nil
-local waitingForBind = false
-
-local noclip = false
-local noclipConnection
-
-bindnoclip.Text = "-"
-
-bindnoclip.MouseButton1Click:Connect(function()
-	waitingForBind = true
-	bindnoclip.Text = "Нажми клавишу"
+-- обновление после смерти
+player.CharacterAdded:Connect(function(char)
+    character = char
+    hrp = char:WaitForChild("HumanoidRootPart")
 end)
-
-local function startNoclip()
-	noclipConnection = RunService.Stepped:Connect(function()
-		local character = player.Character
-
-		if character then
-			for _, part in pairs(character:GetDescendants()) do
-				if part:IsA("BasePart") then
-					part.CanCollide = false
-				end
-			end
-		end
-	end)
-end
-
-local function stopNoclip()
-	if noclipConnection then
-		noclipConnection:Disconnect()
-	end
-
-	local character = player.Character
-
-	if character then
-		for _, part in pairs(character:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.CanCollide = true
-			end
-		end
-	end
-end
-
-UIS.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-
-	if waitingForBind then
-		if input.KeyCode ~= Enum.KeyCode.Unknown then
-			bindKey = input.KeyCode
-			bindnoclip.Text = "" .. bindKey.Name
-			waitingForBind = false
-		end
-
-		return
-	end
-
-	if input.KeyCode == bindKey then
-		noclip = not noclip
-
-		if noclip then
-			startNoclip()
-		else
-			stopNoclip()
-		end
-	end
-end)
-
-
-
-
-
-
-
-
-
-local player = game:GetService("Players").LocalPlayer
-
-local noclip = false
-local connection
-
-buttonnoclip.MouseButton1Click:Connect(function()
-	noclip = not noclip
-
-	local character = player.Character or player.CharacterAdded:Wait()
-
-	if noclip then
-		buttonnoclip.Text = "Off Noclip"
-
-		connection = game:GetService("RunService").Stepped:Connect(function()
-			for _, part in pairs(character:GetDescendants()) do
-				if part:IsA("BasePart") then
-					part.CanCollide = false
-				end
-			end
-		end)
-
-	else
-		buttonnoclip.Text = "Noclip"
-
-		if connection then
-			connection:Disconnect()
-			connection = nil
-		end
-
-		for _, part in pairs(character:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.CanCollide = true
-			end
-		end
-	end
-end)
-
-local textlabetspeed = Instance.new("TextLabel", framemenu)
-
-textlabetspeed.Size = UDim2.new(0, 558,0, 50)
-
-textlabetspeed.BackgroundTransparency = 0.4
-
-textlabetspeed.Position = UDim2.new(0, 0,0.285, 0)
-
-textlabetspeed.Text = "Speed - Бег                                                                    "
-
-textlabetspeed.TextSize = 15
-
-local buttonspeed = Instance.new("TextButton", framemenu)
-
-buttonspeed.Size = UDim2.new(0, 100,0, 33)
-
-buttonspeed.BackgroundTransparency = 0.4
-
-buttonspeed.Position = UDim2.new(0.800, 0,0.305, 0)
-
-buttonspeed.Text = "ON"
-
-buttonspeed.TextScaled = true
-
-
-
-local bindspeed = Instance.new("TextButton", framemenu)
-
-bindspeed.Size = UDim2.new(0, 100,0, 33)
-
-bindspeed.BackgroundTransparency = 0.4
-
-bindspeed.Position = UDim2.new(0.600, 0,0.305, 0)
-
-bindspeed.Text = "[]"
-
-
-
-
-
-local UIS = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-
-local player = Players.LocalPlayer
-
-local bindKey = nil
-local waitingForBind = false
 
 local speedEnabled = false
-local normalSpeed = 16
-local speedValue = 50
+local speed = 1
 
-bindspeed.Text = "-"
-
-bindspeed.MouseButton1Click:Connect(function()
-	waitingForBind = true
-	bindspeed.Text = "Нажми клавишу"
+tab:Toggle("Speed", false, function(v)
+    speedEnabled = v
 end)
 
-local function setSpeed(value)
-	local character = player.Character
+tab:Slider("Speed Amount", 1, 100, 1, function(v)
+    speed = v
+end)
 
-	if character then
-		local humanoid = character:FindFirstChild("Humanoid")
+RunService.Heartbeat:Connect(function()
+    if speedEnabled and character and hrp then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
 
-		if humanoid then
-			humanoid.WalkSpeed = value
-		end
-	end
-end
-
-UIS.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-
-	if waitingForBind then
-		if input.KeyCode ~= Enum.KeyCode.Unknown then
-			bindKey = input.KeyCode
-			bindspeed.Text = "" .. bindKey.Name
-			waitingForBind = false
-		end
-
-		return
-	end
-
-	if input.KeyCode == bindKey then
-		speedEnabled = not speedEnabled
-
-		if speedEnabled then
-			setSpeed(speedValue)
-		else
-			setSpeed(normalSpeed)
-		end
-	end
+        if humanoid and humanoid.MoveDirection.Magnitude > 0 then
+            hrp.CFrame = hrp.CFrame + (humanoid.MoveDirection * (speed / 100))
+        end
+    end
 end)
 
 
 
-
-
-
-
-local player = game:GetService("Players").LocalPlayer
-
-local normalSpeed = 16
-local sprintSpeed = 50
-
-local enabled = false
-
-buttonspeed.MouseButton1Click:Connect(function()
-	enabled = not enabled
-
-	local character = player.Character or player.CharacterAdded:Wait()
-	local humanoid = character:WaitForChild("Humanoid")
-
-	if enabled then
-		humanoid.WalkSpeed = sprintSpeed
-		buttonspeed.Text = "Off Speed"
-	else
-		humanoid.WalkSpeed = normalSpeed
-		buttonspeed.Text = "Speed"
-	end
-end)
-
-local textlabelinfjump = Instance.new("TextLabel", framemenu)
-
-textlabelinfjump.Size = UDim2.new(0, 558,0, 48)
-
-textlabelinfjump.BackgroundTransparency = 0.4
-
-textlabelinfjump.Position = UDim2.new(0, 0,0.42, 0)
-
-textlabelinfjump.Text = "InfJump - Бесконечный прыжок                                     "
-
-textlabelinfjump.TextSize = 15
-
-local buttoninfjump = Instance.new("TextButton", framemenu)
-
-buttoninfjump.Size = UDim2.new(0, 100,0, 33)
-
-buttoninfjump.BackgroundTransparency = 0.4
-
-buttoninfjump.Position = UDim2.new(0.800, 0,0.436, 0)
-
-
-buttoninfjump.Text = "ON"
-
-buttoninfjump.TextScaled = true
-
-
-local bindinfjump = Instance.new("TextButton", framemenu)
-
-bindinfjump.Size = UDim2.new(0, 100,0, 33)
-
-bindinfjump.BackgroundTransparency = 0.4
-
-bindinfjump.Position = UDim2.new(0.600, 0,0.436, 0)
-
-bindinfjump.Text = "[]"
 
 
 
@@ -575,47 +186,24 @@ local UIS = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 
 local player = Players.LocalPlayer
-
-local bindKey = nil
-local waitingForBind = false
 
 local infJump = false
 
-bindinfjump.Text = "-"
-
-bindinfjump.MouseButton1Click:Connect(function()
-	waitingForBind = true
-	bindinfjump.Text = "Нажми клавишу"
+tab:Toggle("Inf Jump", false, function(v)
+    infJump = v
 end)
 
-UIS.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
+UIS.JumpRequest:Connect(function()
+    if infJump then
+        local character = player.Character
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
 
-	if waitingForBind then
-		if input.KeyCode ~= Enum.KeyCode.Unknown then
-			bindKey = input.KeyCode
-			bindinfjump.Text = "" .. bindKey.Name
-			waitingForBind = false
-		end
-
-		return
-	end
-
-	if input.KeyCode == bindKey then
-		infJump = not infJump
-	end
-
-	if infJump and input.KeyCode == Enum.KeyCode.Space then
-		local character = player.Character
-
-		if character then
-			local humanoid = character:FindFirstChildOfClass("Humanoid")
-
-			if humanoid then
-				humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-			end
-		end
-	end
+            if humanoid then
+                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end
+    end
 end)
 
 
@@ -626,153 +214,77 @@ end)
 
 
 
-local player = game:GetService("Players").LocalPlayer
+local Players = game:GetService("Players")
 
-local infiniteJump = false
-local jumpConnection
+local espEnabled = false
+local highlights = {}
 
-buttoninfjump.MouseButton1Click:Connect(function()
-	infiniteJump = not infiniteJump
+local function removeESP()
+    for _, v in pairs(highlights) do
+        if v then
+            v:Destroy()
+        end
+    end
 
-	if infiniteJump then
-		buttoninfjump.Text = "Off InfJump"
+    highlights = {}
+end
 
-		jumpConnection = game:GetService("UserInputService").JumpRequest:Connect(function()
-			local character = player.Character or player.CharacterAdded:Wait()
-			local humanoid = character:FindFirstChildOfClass("Humanoid")
+local function addESP(player)
+    if player == Players.LocalPlayer then return end
 
-			if humanoid then
-				humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-			end
-		end)
+    local function create(character)
+        if not espEnabled then return end
+        if not character then return end
 
-	else
-		buttoninfjump.Text = "InfJump"
+        -- удаляем старый ESP
+        if highlights[player] then
+            highlights[player]:Destroy()
+        end
 
-		if jumpConnection then
-			jumpConnection:Disconnect()
-			jumpConnection = nil
-		end
-	end
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "PlayerESP"
+        highlight.FillTransparency = 0.5
+        highlight.OutlineTransparency = 0
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlight.Adornee = character
+        highlight.Parent = game.CoreGui
+
+        highlights[player] = highlight
+    end
+
+    if player.Character then
+        create(player.Character)
+    end
+
+    player.CharacterAdded:Connect(function(character)
+        task.wait(1)
+        create(character)
+    end)
+end
+
+visualtab:Toggle("ESP", false, function(v)
+    espEnabled = v
+
+    removeESP()
+
+    if espEnabled then
+        for _, player in pairs(Players:GetPlayers()) do
+            addESP(player)
+        end
+    end
 end)
 
-local textlabelcarfly = Instance.new("TextLabel", framemenu)
+Players.PlayerAdded:Connect(function(player)
+    if espEnabled then
+        addESP(player)
+    end
+end)
 
-textlabelcarfly.Size = UDim2.new(0, 558,0, 48)
-
-textlabelcarfly.Position = UDim2.new(0, 0,0.55, 0)
-
-textlabelcarfly.BackgroundTransparency = 0.4
-
-textlabelcarfly.Text = "Car Fly - Летающий автомобиль                                   "
-
-textlabelcarfly.TextSize = 15
-
-local buttoncarfly = Instance.new("TextButton", framemenu)
-
-buttoncarfly.Size = UDim2.new(0, 100,0, 33)
-
-buttoncarfly.BackgroundTransparency = 0.4
-
-buttoncarfly.Position = UDim2.new(0.800, 0,0.570, 0)
-
-buttoncarfly.Text = "ON"
-
-buttoncarfly.TextScaled = true
-
-
-
-
-local bindcarfly = Instance.new("TextButton", framemenu)
-
-bindcarfly.Size = UDim2.new(0, 100,0, 33)
-
-bindcarfly.BackgroundTransparency = 0.4
-
-bindcarfly.Position = UDim2.new(0.600, 0,0.570, 0)
-
-bindcarfly.Text = "[]"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-local player = game:GetService("Players").LocalPlayer
-
-local flying = false
-local speed = 600
-
-local bodyVelocity
-local bodyGyro
-
-buttoncarfly.MouseButton1Click:Connect(function()
-	flying = not flying
-
-	local character = player.Character or player.CharacterAdded:Wait()
-	local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-	if flying then
-		buttoncarfly.Text = "OFF"
-
-		bodyVelocity = Instance.new("BodyVelocity")
-		bodyVelocity.MaxForce = Vector3.new(999999,999999,999999)
-		bodyVelocity.Velocity = Vector3.zero
-		bodyVelocity.Parent = humanoidRootPart
-
-		bodyGyro = Instance.new("BodyGyro")
-		bodyGyro.MaxTorque = Vector3.new(999999,999999,999999)
-		bodyGyro.CFrame = humanoidRootPart.CFrame
-		bodyGyro.Parent = humanoidRootPart
-
-		game:GetService("RunService").RenderStepped:Connect(function()
-			if flying and bodyVelocity and bodyGyro then
-				local camera = workspace.CurrentCamera
-				bodyGyro.CFrame = camera.CFrame
-
-				local moveDirection = Vector3.zero
-
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
-					moveDirection += camera.CFrame.LookVector
-				end
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then
-					moveDirection -= camera.CFrame.LookVector
-				end
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then
-					moveDirection -= camera.CFrame.RightVector
-				end
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then
-					moveDirection += camera.CFrame.RightVector
-				end
-
-				bodyVelocity.Velocity = moveDirection * speed
-			end
-		end)
-
-	else
-		buttoncarfly.Text = "ON"
-
-		if bodyVelocity then
-			bodyVelocity:Destroy()
-			bodyVelocity = nil
-		end
-
-		if bodyGyro then
-			bodyGyro:Destroy()
-			bodyGyro = nil
-		end
-	end
+Players.PlayerRemoving:Connect(function(player)
+    if highlights[player] then
+        highlights[player]:Destroy()
+        highlights[player] = nil
+    end
 end)
 
 
@@ -783,112 +295,190 @@ end)
 
 
 
-local UIS = game:GetService("UserInputService")
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local fakeHeadless = false
+
+-- функция применения headless
+local function applyHeadless(character)
+    local head = character:FindFirstChild("Head")
+
+    if head then
+        -- скрываем голову
+        head.Transparency = 1
+
+        -- скрываем лицо
+        local face = head:FindFirstChildOfClass("Decal")
+        if face then
+            face.Transparency = 1
+        end
+
+        -- скрываем аксессуары головы
+        for _, v in pairs(character:GetChildren()) do
+            if v:IsA("Accessory") then
+                local handle = v:FindFirstChild("Handle")
+
+                if handle and v.AccessoryType == Enum.AccessoryType.Hat then
+                    handle.Transparency = 1
+                end
+            end
+        end
+    end
+end
+
+-- функция отключения
+local function removeHeadless(character)
+    local head = character:FindFirstChild("Head")
+
+    if head then
+        head.Transparency = 0
+
+        local face = head:FindFirstChildOfClass("Decal")
+        if face then
+            face.Transparency = 0
+        end
+
+        for _, v in pairs(character:GetChildren()) do
+            if v:IsA("Accessory") then
+                local handle = v:FindFirstChild("Handle")
+
+                if handle and v.AccessoryType == Enum.AccessoryType.Hat then
+                    handle.Transparency = 0
+                end
+            end
+        end
+    end
+end
+
+-- после смерти снова применять
+player.CharacterAdded:Connect(function(character)
+    if fakeHeadless then
+        character:WaitForChild("Head")
+
+        task.wait(1)
+
+        applyHeadless(character)
+    end
+end)
+
+skintab:Toggle("Fake Headless", false, function(v)
+    fakeHeadless = v
+
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    if v then
+        applyHeadless(character)
+    else
+        removeHeadless(character)
+    end
+end)
+
+
+
+
+
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local korbloxEnabled = false
+
+-- функция применения korblox
+local function applyKorblox(character)
+    local upper = character:FindFirstChild("RightUpperLeg")
+    local lower = character:FindFirstChild("RightLowerLeg")
+    local foot = character:FindFirstChild("RightFoot")
+
+    -- удаляем части ноги
+    if upper then
+        upper:Destroy()
+    end
+
+    if lower then
+        lower:Destroy()
+    end
+
+    -- уменьшаем стопу
+    if foot then
+        foot.Size = Vector3.new(1,0.5,1)
+
+        local mesh = foot:FindFirstChildOfClass("SpecialMesh")
+        if mesh then
+            mesh.Scale = Vector3.new(0.5,0.5,0.5)
+        end
+    end
+end
+
+-- после смерти снова применять
+player.CharacterAdded:Connect(function(character)
+    if korbloxEnabled then
+        character:WaitForChild("Humanoid")
+
+        task.wait(1)
+
+        applyKorblox(character)
+    end
+end)
+
+skintab:Toggle("Fake Korblox", false, function(v)
+    korbloxEnabled = v
+
+    if v then
+        local character = player.Character or player.CharacterAdded:Wait()
+        applyKorblox(character)
+    else
+        player:LoadCharacter()
+    end
+end)
+
+
+
+
+
+
+
+
+
+
+
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 
-local bindKey = nil
-local waitingForBind = false
+local noclipEnabled = false
+local char = nil
 
-local flying = false
-local speed = 600
+local function setupCharacter(c)
+    char = c
+end
 
-local bodyVelocity
-local bodyGyro
-local flyConnection
+player.CharacterAdded:Connect(setupCharacter)
+setupCharacter(player.Character or player.CharacterAdded:Wait())
 
-bindcarfly.Text = "-"
-
--- настройка бинда
-bindcarfly.MouseButton1Click:Connect(function()
-	waitingForBind = true
-	bindcarfly.Text = "Нажми клавишу"
+-- TAB TOGGLE
+tab:Toggle("Noclip", false, function(v)
+    noclipEnabled = v
 end)
 
-local function startFly()
-	local character = player.Character or player.CharacterAdded:Wait()
-	local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+-- основной цикл
+RunService.Stepped:Connect(function()
+    if not noclipEnabled then return end
+    if not char then return end
 
-	bodyVelocity = Instance.new("BodyVelocity")
-	bodyVelocity.MaxForce = Vector3.new(999999,999999,999999)
-	bodyVelocity.Velocity = Vector3.zero
-	bodyVelocity.Parent = humanoidRootPart
-
-	bodyGyro = Instance.new("BodyGyro")
-	bodyGyro.MaxTorque = Vector3.new(999999,999999,999999)
-	bodyGyro.CFrame = humanoidRootPart.CFrame
-	bodyGyro.Parent = humanoidRootPart
-
-	flyConnection = RunService.RenderStepped:Connect(function()
-		if flying and bodyVelocity and bodyGyro then
-			local camera = workspace.CurrentCamera
-			bodyGyro.CFrame = camera.CFrame
-
-			local moveDirection = Vector3.zero
-
-			if UIS:IsKeyDown(Enum.KeyCode.W) then
-				moveDirection += camera.CFrame.LookVector
-			end
-
-			if UIS:IsKeyDown(Enum.KeyCode.S) then
-				moveDirection -= camera.CFrame.LookVector
-			end
-
-			if UIS:IsKeyDown(Enum.KeyCode.A) then
-				moveDirection -= camera.CFrame.RightVector
-			end
-
-			if UIS:IsKeyDown(Enum.KeyCode.D) then
-				moveDirection += camera.CFrame.RightVector
-			end
-
-			bodyVelocity.Velocity = moveDirection * speed
-		end
-	end)
-end
-
-local function stopFly()
-	if flyConnection then
-		flyConnection:Disconnect()
-	end
-
-	if bodyVelocity then
-		bodyVelocity:Destroy()
-		bodyVelocity = nil
-	end
-
-	if bodyGyro then
-		bodyGyro:Destroy()
-		bodyGyro = nil
-	end
-end
-
-UIS.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-
-	-- выбор клавиши
-	if waitingForBind then
-		if input.KeyCode ~= Enum.KeyCode.Unknown then
-			bindKey = input.KeyCode
-			bindcarfly.Text = "" .. bindKey.Name
-			waitingForBind = false
-		end
-
-		return
-	end
-
-	-- включение carfly
-	if input.KeyCode == bindKey then
-		flying = not flying
-
-		if flying then
-			startFly()
-		else
-			stopFly()
-		end
-	end
+    for _, part in pairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
 end)
 
 
@@ -900,140 +490,85 @@ end)
 
 
 
-local textlabelesp = Instance.new("TextLabel", framemenu)
-
-textlabelesp.Size = UDim2.new(0, 558,0, 50)
-
-textlabelesp.Position = UDim2.new(0, 0,0.68, 0)
-
-textlabelesp.BackgroundTransparency = 0.4
-
-textlabelesp.Text = "ESP - Подсвечивает игроков                                        "
-
-textlabelesp.TextSize = 15
-
-local buttonesp = Instance.new("TextButton", framemenu)
-
-buttonesp.Size = UDim2.new(0, 100,0, 33)
-
-buttonesp.Position = UDim2.new(0.800, 0,0.700, 0)
-
-buttonesp.BackgroundTransparency = 0.4
-
-buttonesp.Text = "ON"
-
-buttonesp.TextScaled = true
 
 
 
 
-
-
-
-
-local bindesp = Instance.new("TextButton", framemenu)
-
-bindesp.Size = UDim2.new(0, 100,0, 33)
-
-bindesp.BackgroundTransparency = 0.4
-
-bindesp.Position = UDim2.new(0.600, 0,0.700, 0)
-
-bindesp.Text = "[]"
-
-
-
-
-
-
-
-local UIS = game:GetService("UserInputService")
 local Players = game:GetService("Players")
-
-local player = Players.LocalPlayer
-
-local bindKey = nil
-local waitingForBind = false
 
 local espEnabled = false
+local espObjects = {}
 
-bindesp.Text = "-"
+local function addESP(plr, char)
+    if plr == Players.LocalPlayer or not char then return end
 
--- настройка бинда
-bindesp.MouseButton1Click:Connect(function()
-	waitingForBind = true
-	bindesp.Text = "Нажми клавишу"
-end)
+    local head = char:FindFirstChild("Head")
+    if not head then return end
 
--- включение ESP
-local function enableESP()
-	for _, plr in pairs(Players:GetPlayers()) do
-		if plr ~= player and plr.Character then
+    if espObjects[plr] then
+        espObjects[plr]:Destroy()
+    end
 
-			if not plr.Character:FindFirstChild("ESPHighlight") then
-				local highlight = Instance.new("Highlight")
-				highlight.Name = "ESPHighlight"
-				highlight.FillTransparency = 0.5
-				highlight.OutlineTransparency = 0
-				highlight.Parent = plr.Character
-			end
-		end
-	end
+    local bb = Instance.new("BillboardGui")
+    bb.Size = UDim2.new(0, 120, 0, 25)
+    bb.StudsOffset = Vector3.new(0, 2, 0)
+    bb.AlwaysOnTop = true
+    bb.Parent = head
+
+    local txt = Instance.new("TextLabel")
+    txt.Size = UDim2.new(0.4, 0, 1, 0)
+    txt.BackgroundTransparency = 1
+    txt.Text = plr.DisplayName
+    txt.TextScaled = true
+    txt.Font = Enum.Font.GothamBold
+
+    -- 🔴 КРАСНЫЙ СТИЛЬ
+    txt.TextColor3 = Color3.fromRGB(255, 60, 60)
+    txt.TextStrokeTransparency = 0
+    txt.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+
+    txt.Parent = bb
+
+    espObjects[plr] = bb
 end
 
--- выключение ESP
-local function disableESP()
-	for _, plr in pairs(Players:GetPlayers()) do
-		if plr.Character then
-			local highlight = plr.Character:FindFirstChild("ESPHighlight")
+local function hook(plr)
+    plr.CharacterAdded:Connect(function(c)
+        task.wait(0.5)
+        if espEnabled then
+            addESP(plr, c)
+        end
+    end)
 
-			if highlight then
-				highlight:Destroy()
-			end
-		end
-	end
+    if plr.Character and espEnabled then
+        addESP(plr, plr.Character)
+    end
 end
 
--- новые игроки
-Players.PlayerAdded:Connect(function(plr)
-	plr.CharacterAdded:Connect(function(character)
-		task.wait(1)
+visualtab:Toggle("ESP Names", false, function(v)
+    espEnabled = v
 
-		if espEnabled and plr ~= player then
-			local highlight = Instance.new("Highlight")
-			highlight.Name = "ESPHighlight"
-			highlight.FillTransparency = 0.5
-			highlight.OutlineTransparency = 0
-			highlight.Parent = character
-		end
-	end)
+    if not v then
+        for _, g in pairs(espObjects) do
+            g:Destroy()
+        end
+        espObjects = {}
+    else
+        for _, p in pairs(Players:GetPlayers()) do
+            hook(p)
+        end
+    end
 end)
 
-UIS.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
+Players.PlayerAdded:Connect(hook)
 
-	-- установка клавиши
-	if waitingForBind then
-		if input.KeyCode ~= Enum.KeyCode.Unknown then
-			bindKey = input.KeyCode
-			bindesp.Text = "" .. bindKey.Name
-			waitingForBind = false
-		end
-
-		return
-	end
-
-	-- включение ESP
-	if bindKey and input.KeyCode == bindKey then
-		espEnabled = not espEnabled
-
-		if espEnabled then
-			enableESP()
-		else
-			disableESP()
-		end
-	end
+Players.PlayerRemoving:Connect(function(p)
+    if espObjects[p] then
+        espObjects[p]:Destroy()
+        espObjects[p] = nil
+    end
 end)
+
 
 
 
@@ -1045,206 +580,78 @@ end)
 
 
 local Players = game:GetService("Players")
-
-local LocalPlayer = Players.LocalPlayer
-local ESPEnabled = false
-local highlights = {}
-
-local function createESP(player)
-	if player == LocalPlayer then return end
-
-	local function setup(character)
-		if highlights[player] then
-			highlights[player]:Destroy()
-		end
-
-		local highlight = Instance.new("Highlight")
-		highlight.Name = "ESP"
-		highlight.Adornee = character
-		highlight.FillColor = Color3.fromRGB(255, 0, 0)
-		highlight.FillTransparency = 0.5
-		highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-		highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-		highlight.Enabled = ESPEnabled
-		highlight.Parent = character
-
-		highlights[player] = highlight
-	end
-
-	if player.Character then
-		setup(player.Character)
-	end
-
-	player.CharacterAdded:Connect(setup)
-end
-
-for _, player in pairs(Players:GetPlayers()) do
-	createESP(player)
-end
-
-Players.PlayerAdded:Connect(createESP)
-
-buttonesp.MouseButton1Click:Connect(function()
-	ESPEnabled = not ESPEnabled
-
-	for _, highlight in pairs(highlights) do
-		if highlight then
-			highlight.Enabled = ESPEnabled
-		end
-	end
-
-	buttonesp.Text = ESPEnabled and "Off Esp" or "Esp"
-end)
-
-
-
-
-local textlabelaimbot = Instance.new("TextLabel", framemenu)
-
-textlabelaimbot.Size = UDim2.new(0, 558,0, 50)
-
-textlabelaimbot.Position = UDim2.new(0, 0,0.816, 0)
-
-textlabelaimbot.BackgroundTransparency = 0.4
-
-
-textlabelaimbot.Text = "Aimbot - целится в игрока                                            "  
-
-textlabelaimbot.TextSize = 15
-
-local buttonaimbot = Instance.new("TextButton", framemenu)
-
-buttonaimbot.Size = UDim2.new(0, 100,0, 33)
-
-buttonaimbot.Position = UDim2.new(0.800, 0,0.835, 0)
-
-buttonaimbot.Text = "ON"
-
-buttonaimbot.BackgroundTransparency = 0.4
-
-buttonaimbot.TextScaled = true
-
-
-
-
-
-
-
-
-local bindaimbot = Instance.new("TextButton", framemenu)
-
-bindaimbot.Size = UDim2.new(0, 100,0, 33)
-
-bindaimbot.Position = UDim2.new(0.600, 0,0.835, 0)
-
-bindaimbot.Text = "-"
-
-bindaimbot.BackgroundTransparency = 0.4
-
-
-
-
-
-
-
-
-
-
-
 local UIS = game:GetService("UserInputService")
-local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 local camera = workspace.CurrentCamera
 
-local bindKey = nil
-local waitingForBind = false
+local enabled = false
+local holding = false
+local maxDistance = 200
 
-local aimbotEnabled = false
-local aimConnection
-
-bindaimbot.Text = "-"
-
--- выбор клавиши
-bindaimbot.MouseButton1Click:Connect(function()
-	waitingForBind = true
-	bindaimbot.Text = "Нажми клавишу"
-end)
-
--- поиск ближайшего игрока
 local function getClosestPlayer()
-	local closestPlayer = nil
-	local shortestDistance = math.huge
+    local closest = nil
+    local dist = math.huge
 
-	for _, plr in pairs(Players:GetPlayers()) do
-		if plr ~= player and plr.Character and plr.Character:FindFirstChild("Head") then
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= player and plr.Character then
+            local head = plr.Character:FindFirstChild("Head")
 
-			local head = plr.Character.Head
+            if head then
+                local mag = (camera.CFrame.Position - head.Position).Magnitude
 
-			local screenPos, visible = camera:WorldToViewportPoint(head.Position)
+                if mag < dist and mag <= maxDistance then
+                    dist = mag
+                    closest = head
+                end
+            end
+        end
+    end
 
-			if visible then
-				local mousePos = UIS:GetMouseLocation()
-
-				local distance = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
-
-				if distance < shortestDistance then
-					shortestDistance = distance
-					closestPlayer = plr
-				end
-			end
-		end
-	end
-
-	return closestPlayer
+    return closest
 end
 
-local function startAimbot()
-	aimConnection = RunService.RenderStepped:Connect(function()
-		local target = getClosestPlayer()
-
-		if target and target.Character and target.Character:FindFirstChild("Head") then
-			camera.CFrame = CFrame.new(
-				camera.CFrame.Position,
-				target.Character.Head.Position
-			)
-		end
-	end)
-end
-
-local function stopAimbot()
-	if aimConnection then
-		aimConnection:Disconnect()
-		aimConnection = nil
-	end
-end
-
-UIS.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-
-	-- установка бинда
-	if waitingForBind then
-		if input.KeyCode ~= Enum.KeyCode.Unknown then
-			bindKey = input.KeyCode
-			bindaimbot.Text = "" .. bindKey.Name
-			waitingForBind = false
-		end
-
-		return
-	end
-
-	-- включение / выключение
-	if bindKey and input.KeyCode == bindKey then
-		aimbotEnabled = not aimbotEnabled
-
-		if aimbotEnabled then
-			startAimbot()
-		else
-			stopAimbot()
-		end
-	end
+-- TOGGLE
+pvptab:Toggle("Aimbot", false, function(v)
+    enabled = v
 end)
+
+-- SLIDER ДО 1000
+pvptab:Slider("Aimbot Distance", 0, 1000, 200, function(v)
+    maxDistance = v
+end)
+
+-- RMB hold
+UIS.InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        holding = true
+    end
+end)
+
+UIS.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        holding = false
+    end
+end)
+
+-- AIM LOOP
+RunService.RenderStepped:Connect(function()
+    if not enabled then return end
+    if not holding then return end
+
+    local target = getClosestPlayer()
+    if target then
+        camera.CFrame = camera.CFrame:Lerp(
+            CFrame.new(camera.CFrame.Position, target.Position),
+            0.2
+        )
+    end
+end)
+
+
+
 
 
 
@@ -1256,110 +663,91 @@ end)
 
 
 local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
-
-local LocalPlayer = Players.LocalPlayer
-local Camera = workspace.CurrentCamera
-
-local AimbotEnabled = false
-local Holding = false
-
--- Проверка игрока
-local function isValidPlayer(player)
-	if player == LocalPlayer then
-		return false
-	end
-
-	local character = player.Character
-	if not character then
-		return false
-	end
-
-	local humanoid = character:FindFirstChild("Humanoid")
-	local head = character:FindFirstChild("Head")
-
-	return humanoid and humanoid.Health > 0 and head
-end
-
--- Ближайший игрок
-local function getClosestPlayer()
-	local closest = nil
-	local shortest = math.huge
-
-	for _, player in pairs(Players:GetPlayers()) do
-		if isValidPlayer(player) then
-			local head = player.Character.Head
-
-			local pos, visible = Camera:WorldToViewportPoint(head.Position)
-
-			if visible then
-				local distance = (
-					Vector2.new(pos.X, pos.Y) -
-						Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-				).Magnitude
-
-				if distance < shortest then
-					shortest = distance
-					closest = player
-				end
-			end
-		end
-	end
-
-	return closest
-end
-
--- Кнопка GUI
-buttonaimbot.MouseButton1Click:Connect(function()
-	AimbotEnabled = not AimbotEnabled
-
-	buttonaimbot.Text = AimbotEnabled and "Off Aimbot" or "Aimbot"
-end)
-
--- ПКМ
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-
-	if input.UserInputType == Enum.UserInputType.MouseButton2 then
-		Holding = true
-	end
-end)
-
-UserInputService.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton2 then
-		Holding = false
-	end
-end)
-
--- Наводка
-RunService.RenderStepped:Connect(function()
-	if AimbotEnabled and Holding then
-		local target = getClosestPlayer()
-
-		if target and target.Character and target.Character:FindFirstChild("Head") then
-			Camera.CFrame = CFrame.new(
-				Camera.CFrame.Position,
-				target.Character.Head.Position
-			)
-		end
-	end
-end)
-
-
-
-
-
-
-
 local UIS = game:GetService("UserInputService")
 
-UIS.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
+local player = Players.LocalPlayer
 
-	if input.KeyCode == Enum.KeyCode.T then
-		framemenu.Visible = not framemenu.Visible
-	end
+local flying = false
+local flySpeed = 30
+
+local bv
+local bg
+local car
+local seat
+
+local function getCar()
+    local char = player.Character
+    if not char then return end
+
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then return end
+
+    seat = hum.SeatPart
+    if not seat then return end
+
+    car = seat:FindFirstAncestorOfClass("Model")
+    if not car then return end
+
+    local root = car:FindFirstChild("HumanoidRootPart") or car.PrimaryPart
+    return root
+end
+
+tab:Toggle("Car Fly", false, function(v)
+    flying = v
+
+    if flying then
+        local root = getCar()
+        if not root then return end
+
+        bv = Instance.new("BodyVelocity")
+        bv.MaxForce = Vector3.new(1e9,1e9,1e9)
+        bv.Velocity = Vector3.zero
+        bv.Parent = root
+
+        bg = Instance.new("BodyGyro")
+        bg.MaxTorque = Vector3.new(1e9,1e9,1e9)
+        bg.P = 5000
+        bg.Parent = root
+
+        RunService.RenderStepped:Connect(function()
+            if not flying then return end
+
+            local root = getCar()
+            if not root then return end
+
+            local camera = workspace.CurrentCamera
+
+            local dir = Vector3.zero
+
+            if UIS:IsKeyDown(Enum.KeyCode.W) then
+                dir += camera.CFrame.LookVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.S) then
+                dir -= camera.CFrame.LookVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.A) then
+                dir -= camera.CFrame.RightVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.D) then
+                dir += camera.CFrame.RightVector
+            end
+
+            if dir.Magnitude > 0 then
+                bv.Velocity = dir.Unit * flySpeed
+                bg.CFrame = camera.CFrame
+            else
+                bv.Velocity = Vector3.zero
+            end
+        end)
+    else
+        if bv then bv:Destroy() end
+        if bg then bg:Destroy() end
+    end
+end)
+
+tab:Slider("Car Fly Speed", 0, 100, 30, function(v)
+    flySpeed = v
 end)
 
 
