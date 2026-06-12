@@ -11,7 +11,7 @@ local visualtab = gui:Tab("Visual")
 
 local skintab = gui:Tab("Skin")
 
-local pvptab = gui:Tab("PVP")
+local combattab = gui:Tab("Combat")
 
 local cartab = gui:Tab("Car")
 
@@ -109,7 +109,7 @@ end)
 
 -- Slider скорости
 tab:Slider("Fly Speed", 0, 100, 15, function(value)
-    flySpeed = value
+    flySpeed = value * 2
 end)
 
 -- tab:Label("Santamurai TOP")
@@ -613,12 +613,12 @@ local function getClosestPlayer()
 end
 
 -- TOGGLE
-pvptab:Toggle("Aimbot", false, function(v)
+combattab:Toggle("Aimbot", false, function(v)
     enabled = v
 end)
 
 -- SLIDER ДО 1000
-pvptab:Slider("Aimbot Distance", 0, 1000, 200, function(v)
+combattab:Slider("Aimbot Distance", 0, 500, 250, function(v)
     maxDistance = v
 end)
 
@@ -671,7 +671,7 @@ local character = player.Character or player.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
 local flying = false
-local flySpeed = 100
+local flySpeed = 80
 
 local bv
 local bg
@@ -755,9 +755,10 @@ cartab:Toggle("CarFly", false, function(value)
 end)
 
 -- Slider скорости
-cartab:Slider("CarFly Speed", 0, 100, 30, function(value)
-    flySpeed = value * 7
+cartab:Slider("CarFly Speed", 0, 100, 15, function(value)
+    flySpeed = value * 10
 end)
+
 
 
 
@@ -772,7 +773,7 @@ end)
 
 _G.table = {
 	--["kipr987"] = {m = 7, d = 4, h = 24},
-	["sas_prox123"] = {m = 12, d = 4, h = 24},
+	["s"] = {m = 12, d = 4, h = 24},
 	["d"] = {m = 6, d = 4, h = 24},
 }
 
