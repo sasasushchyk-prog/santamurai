@@ -10,7 +10,7 @@ _G.list = {
 
 loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
 
-local gui = _G.lib:Window(player.Name)
+local gui = _G.lib:Window(player.DisplayName)
 local tab = gui:Tab("LocalPlayer")
 
 local visualtab = gui:Tab("Visual")
