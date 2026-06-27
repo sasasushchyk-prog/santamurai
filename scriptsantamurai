@@ -11,7 +11,7 @@ _G.list = {
 
 loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
 
-local gui = _G.lib("Santamurai")
+local gui = _G.lib:Window(game:GetService("Players").LocalPlayer.DisplayName)
 local tab = gui:Tab("LocalPlayer")
 
 local visualtab = gui:Tab("Visual")
