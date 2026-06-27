@@ -3,7 +3,8 @@ _G.list = {
 	 ["sas_prox123"] = {m = 12,d=15,h=0},
 		["manchesterlouti_fanz"] = {m = 7,d=31,h=0},
 		["bodia_21q"] = {m = 6,d=30,h=0},
-		["m1zzer_TITAN"] = {m = 6,d=31,h=0}
+		["m1zzer_TITAN"] = {m = 6,d=31,h=0},
+		["cvrsxdcro"] = {m = 6,d=31,h=0}
 }
 
 
