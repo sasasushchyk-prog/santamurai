@@ -614,3 +614,83 @@ tptab:Button("Closet", function()
     end
 
 end)
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- ТВОИ КООРДИНАТЫ
+local teleportPosition = Vector3.new(1353, 8, -327)
+
+-- КНОПКА В GUI
+tptab:Button("Coffe", function()
+
+    local character = player.Character
+    local hrp = character and character:FindFirstChild("HumanoidRootPart")
+
+    if hrp then
+        hrp.CFrame = CFrame.new(teleportPosition)
+    end
+
+end)
+
+
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- ТВОИ КООРДИНАТЫ
+local teleportPosition = Vector3.new(1163, 26, -973)
+
+-- КНОПКА В GUI
+tptab:Button("Bandage", function()
+
+    local character = player.Character
+    local hrp = character and character:FindFirstChild("HumanoidRootPart")
+
+    if hrp then
+        hrp.CFrame = CFrame.new(teleportPosition)
+    end
+
+end)
+
+
+
+
+
+
+-- Получаем игроков сервера
+local playerList = {}
+
+for _, plr in ipairs(Players:GetPlayers()) do
+    if plr ~= player then
+        table.insert(playerList, plr.Name)
+    end
+end
+
+-- Dropdown со всеми игроками
+tptab:Dropdown("Players", playerList, function(value)
+
+    local targetPlayer = Players:FindFirstChild(value)
+
+    if targetPlayer and targetPlayer.Character then
+
+        local targetHRP =
+            targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+        local myCharacter = player.Character
+        local myHRP =
+            myCharacter and myCharacter:FindFirstChild("HumanoidRootPart")
+
+        if targetHRP and myHRP then
+            myHRP.CFrame = targetHRP.CFrame
+        end
+
+    end
+
+end)
