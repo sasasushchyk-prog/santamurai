@@ -1,0 +1,616 @@
+loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
+
+local gui = _G.lib:Window(game:GetService("Players").LocalPlayer.DisplayName)
+local playertab = gui:Tab("Player")
+local esptab = gui:Tab("Esp")
+local skintab = gui:Tab("Skin")
+local pvptab = gui:Tab("PVP")
+local tptab = gui:Tab("Teleport")
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- обновление после смерти
+player.CharacterAdded:Connect(function(char)
+    character = char
+    hrp = char:WaitForChild("HumanoidRootPart")
+end)
+
+local speedEnabled = false
+local speed = 1
+
+playertab:Toggle("Speed", false, function(v)
+    speedEnabled = v
+end)
+
+playertab:Slider("Speed Amount", 1, 100, 1, function(v)
+    speed = v
+end)
+
+RunService.Heartbeat:Connect(function()
+    if speedEnabled and character and hrp then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+        if humanoid and humanoid.MoveDirection.Magnitude > 0 then
+            hrp.CFrame = hrp.CFrame + (humanoid.MoveDirection * (speed / 100))
+        end
+    end
+end)
+
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+
+local infJump = false
+
+playertab:Toggle("Inf Jump", false, function(v)
+    infJump = v
+end)
+
+UIS.JumpRequest:Connect(function()
+    if infJump then
+        local character = player.Character
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+            if humanoid then
+                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end
+    end
+end)
+
+local Players = game:GetService("Players")
+
+local espEnabled = false
+local highlights = {}
+
+local function removeESP()
+    for _, v in pairs(highlights) do
+        if v then
+            v:Destroy()
+        end
+    end
+
+    highlights = {}
+end
+
+local function addESP(player)
+    if player == Players.LocalPlayer then return end
+
+    local function create(character)
+        if not espEnabled then return end
+        if not character then return end
+
+        -- удаляем старый ESP
+        if highlights[player] then
+            highlights[player]:Destroy()
+        end
+
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "PlayerESP"
+        highlight.FillTransparency = 0.5
+        highlight.OutlineTransparency = 0
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlight.Adornee = character
+        highlight.Parent = game.CoreGui
+
+        highlights[player] = highlight
+    end
+
+    if player.Character then
+        create(player.Character)
+    end
+
+    player.CharacterAdded:Connect(function(character)
+        task.wait(1)
+        create(character)
+    end)
+end
+
+esptab:Toggle("ESP", false, function(v)
+    espEnabled = v
+
+    removeESP()
+
+    if espEnabled then
+        for _, player in pairs(Players:GetPlayers()) do
+            addESP(player)
+        end
+    end
+end)
+
+Players.PlayerAdded:Connect(function(player)
+    if espEnabled then
+        addESP(player)
+    end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    if highlights[player] then
+        highlights[player]:Destroy()
+        highlights[player] = nil
+    end
+end)
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local fakeHeadless = false
+
+-- функция применения headless
+local function applyHeadless(character)
+    local head = character:FindFirstChild("Head")
+
+    if head then
+        -- скрываем голову
+        head.Transparency = 1
+
+        -- скрываем лицо
+        local face = head:FindFirstChildOfClass("Decal")
+        if face then
+            face.Transparency = 1
+        end
+
+        -- скрываем аксессуары головы
+        for _, v in pairs(character:GetChildren()) do
+            if v:IsA("Accessory") then
+                local handle = v:FindFirstChild("Handle")
+
+                if handle and v.AccessoryType == Enum.AccessoryType.Hat then
+                    handle.Transparency = 1
+                end
+            end
+        end
+    end
+end
+
+-- функция отключения
+local function removeHeadless(character)
+    local head = character:FindFirstChild("Head")
+
+    if head then
+        head.Transparency = 0
+
+        local face = head:FindFirstChildOfClass("Decal")
+        if face then
+            face.Transparency = 0
+        end
+
+        for _, v in pairs(character:GetChildren()) do
+            if v:IsA("Accessory") then
+                local handle = v:FindFirstChild("Handle")
+
+                if handle and v.AccessoryType == Enum.AccessoryType.Hat then
+                    handle.Transparency = 0
+                end
+            end
+        end
+    end
+end
+
+-- после смерти снова применять
+player.CharacterAdded:Connect(function(character)
+    if fakeHeadless then
+        character:WaitForChild("Head")
+
+        task.wait(1)
+
+        applyHeadless(character)
+    end
+end)
+
+skintab:Toggle("Fake Headless", false, function(v)
+    fakeHeadless = v
+
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    if v then
+        applyHeadless(character)
+    else
+        removeHeadless(character)
+    end
+end)
+
+
+
+
+
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local korbloxEnabled = false
+
+-- функция применения korblox
+local function applyKorblox(character)
+    local upper = character:FindFirstChild("RightUpperLeg")
+    local lower = character:FindFirstChild("RightLowerLeg")
+    local foot = character:FindFirstChild("RightFoot")
+
+    -- удаляем части ноги
+    if upper then
+        upper:Destroy()
+    end
+
+    if lower then
+        lower:Destroy()
+    end
+
+    -- уменьшаем стопу
+    if foot then
+        foot.Size = Vector3.new(1,0.5,1)
+
+        local mesh = foot:FindFirstChildOfClass("SpecialMesh")
+        if mesh then
+            mesh.Scale = Vector3.new(0.5,0.5,0.5)
+        end
+    end
+end
+
+-- после смерти снова применять
+player.CharacterAdded:Connect(function(character)
+    if korbloxEnabled then
+        character:WaitForChild("Humanoid")
+
+        task.wait(1)
+
+        applyKorblox(character)
+    end
+end)
+
+skintab:Toggle("Fake Korblox", false, function(v)
+    korbloxEnabled = v
+
+    if v then
+        local character = player.Character or player.CharacterAdded:Wait()
+        applyKorblox(character)
+    else
+        player:LoadCharacter()
+    end
+end)
+
+
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+local noclipEnabled = false
+local char = nil
+
+local function setupCharacter(c)
+    char = c
+end
+
+player.CharacterAdded:Connect(setupCharacter)
+setupCharacter(player.Character or player.CharacterAdded:Wait())
+
+-- TAB TOGGLE
+playertab:Toggle("Noclip", false, function(v)
+    noclipEnabled = v
+end)
+
+-- основной цикл
+RunService.Stepped:Connect(function()
+    if not noclipEnabled then return end
+    if not char then return end
+
+    for _, part in pairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+end)
+
+
+
+
+local Players = game:GetService("Players")
+
+local espEnabled = false
+local espObjects = {}
+
+local function addESP(plr, char)
+    if plr == Players.LocalPlayer or not char then return end
+
+    local head = char:FindFirstChild("Head")
+    if not head then return end
+
+    if espObjects[plr] then
+        espObjects[plr]:Destroy()
+    end
+
+    local bb = Instance.new("BillboardGui")
+    bb.Size = UDim2.new(0, 120, 0, 25)
+    bb.StudsOffset = Vector3.new(0, 2, 0)
+    bb.AlwaysOnTop = true
+    bb.Parent = head
+
+    local txt = Instance.new("TextLabel")
+    txt.Size = UDim2.new(0.4, 0, 1, 0)
+    txt.BackgroundTransparency = 1
+    txt.Text = plr.DisplayName
+    txt.TextScaled = true
+    txt.Font = Enum.Font.GothamBold
+
+    -- 🔴 КРАСНЫЙ СТИЛЬ
+    txt.TextColor3 = Color3.fromRGB(255, 60, 60)
+    txt.TextStrokeTransparency = 0
+    txt.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+
+    txt.Parent = bb
+
+    espObjects[plr] = bb
+end
+
+local function hook(plr)
+    plr.CharacterAdded:Connect(function(c)
+        task.wait(0.5)
+        if espEnabled then
+            addESP(plr, c)
+        end
+    end)
+
+    if plr.Character and espEnabled then
+        addESP(plr, plr.Character)
+    end
+end
+
+esptab:Toggle("ESP Names", false, function(v)
+    espEnabled = v
+
+    if not v then
+        for _, g in pairs(espObjects) do
+            g:Destroy()
+        end
+        espObjects = {}
+    else
+        for _, p in pairs(Players:GetPlayers()) do
+            hook(p)
+        end
+    end
+end)
+
+Players.PlayerAdded:Connect(hook)
+
+Players.PlayerRemoving:Connect(function(p)
+    if espObjects[p] then
+        espObjects[p]:Destroy()
+        espObjects[p] = nil
+    end
+end)
+
+
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+local enabled = false
+local holding = false
+local maxDistance = 250
+
+local currentTarget = nil
+
+-- Поиск ближайшей головы
+local function getClosestPlayer()
+    local closest = nil
+    local closestDistance = math.huge
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= player and plr.Character then
+            local head = plr.Character:FindFirstChild("Head")
+            local humanoid = plr.Character:FindFirstChildOfClass("Humanoid")
+
+            if head and humanoid and humanoid.Health > 0 then
+                local distance = (camera.CFrame.Position - head.Position).Magnitude
+
+                if distance <= maxDistance and distance < closestDistance then
+                    closestDistance = distance
+                    closest = head
+                end
+            end
+        end
+    end
+
+    return closest
+end
+
+-- Aimbot Toggle
+pvptab:Toggle("Aimbot", false, function(v)
+    enabled = v
+
+    if not enabled then
+        currentTarget = nil
+    end
+end)
+
+-- Дистанция
+pvptab:Slider("Aimbot Distance", 0, 500, 250, function(v)
+    maxDistance = v
+end)
+
+-- Зажатие ПКМ
+UIS.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        holding = true
+        currentTarget = getClosestPlayer()
+    end
+end)
+
+-- Отпускание ПКМ
+UIS.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        holding = false
+        currentTarget = nil
+    end
+end)
+
+-- AIM LOOP
+RunService.RenderStepped:Connect(function()
+    if not enabled or not holding then
+        return
+    end
+
+    -- Если цель пропала или умерла — ищем новую
+    if not currentTarget
+        or not currentTarget.Parent
+        or not currentTarget:IsDescendantOf(workspace)
+        or not currentTarget.Parent:FindFirstChildOfClass("Humanoid")
+        or currentTarget.Parent:FindFirstChildOfClass("Humanoid").Health <= 0 then
+
+        currentTarget = getClosestPlayer()
+    end
+
+    if currentTarget then
+        -- Точное наведение прямо в голову
+        camera.CFrame = CFrame.lookAt(
+            camera.CFrame.Position,
+            currentTarget.Position
+        )
+    end
+end)
+
+
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- ТВОИ КООРДИНАТЫ
+local teleportPosition = Vector3.new(1115, 8, -330)
+
+-- КНОПКА В GUI
+tptab:Button("Bank", function()
+
+    local character = player.Character
+    local hrp = character and character:FindFirstChild("HumanoidRootPart")
+
+    if hrp then
+        hrp.CFrame = CFrame.new(teleportPosition)
+    end
+
+end)
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- ТВОИ КООРДИНАТЫ
+local teleportPosition = Vector3.new(1652, 9, -725)
+
+-- КНОПКА В GUI
+tptab:Button("Jewelry", function()
+
+    local character = player.Character
+    local hrp = character and character:FindFirstChild("HumanoidRootPart")
+
+    if hrp then
+        hrp.CFrame = CFrame.new(teleportPosition)
+    end
+
+end)
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- ТВОИ КООРДИНАТЫ
+local teleportPosition = Vector3.new(1002, 11, 406)
+
+-- КНОПКА В GUI
+tptab:Button("Ship", function()
+
+    local character = player.Character
+    local hrp = character and character:FindFirstChild("HumanoidRootPart")
+
+    if hrp then
+        hrp.CFrame = CFrame.new(teleportPosition)
+    end
+
+end)
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- ТВОИ КООРДИНАТЫ
+local teleportPosition = Vector3.new(372, 15, -1355)
+
+-- КНОПКА В GUI
+tptab:Button("Base", function()
+
+    local character = player.Character
+    local hrp = character and character:FindFirstChild("HumanoidRootPart")
+
+    if hrp then
+        hrp.CFrame = CFrame.new(teleportPosition)
+    end
+
+end)
+
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- ТВОИ КООРДИНАТЫ
+local teleportPosition = Vector3.new(595, 29, -900)
+
+-- КНОПКА В GUI
+tptab:Button("Police", function()
+
+    local character = player.Character
+    local hrp = character and character:FindFirstChild("HumanoidRootPart")
+
+    if hrp then
+        hrp.CFrame = CFrame.new(teleportPosition)
+    end
+
+end)
+
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- ТВОИ КООРДИНАТЫ
+local teleportPosition = Vector3.new(689, 6, -691)
+
+-- КНОПКА В GUI
+tptab:Button("Closet", function()
+
+    local character = player.Character
+    local hrp = character and character:FindFirstChild("HumanoidRootPart")
+
+    if hrp then
+        hrp.CFrame = CFrame.new(teleportPosition)
+    end
+
+end)
