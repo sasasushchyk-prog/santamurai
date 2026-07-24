@@ -5,208 +5,255 @@ _G.list = {
 
 
 
+
+for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
+    if v.Name == "ui" then
+        v:Destroy()
+    end
+end
 loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
 
+
+local gui = _G.lib:Window("Password")
+
+local pass = gui:Tab("Password")
+
+pass:Textbox("Enter","",function(value)
+        if value == "santamurai" then
+        for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
+    if v.Name == "ui" then
+        v:Destroy()
+    end
+end
+loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
 local gui = _G.lib:Window(game:GetService("Players").LocalPlayer.DisplayName)
-local tab = gui:Tab("LocalPlayer")
 
 local visualtab = gui:Tab("Visual")
 
 local skintab = gui:Tab("Skin")
 
-local combattab = gui:Tab("Combat")
+local fpstab = gui:Tab("FPS")
 
-local cartab = gui:Tab("Car")
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UIS = game:GetService("UserInputService")
 
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-local flying = false
-local flySpeed = 15
-
-local bv
-local bg
-local flyConnection
-
-local control = {
-    F = 0,
-    B = 0,
-    L = 0,
-    R = 0
-}
-
--- Управление
-UIS.InputBegan:Connect(function(input, gpe)
-    if gpe then return end
-
-    if input.KeyCode == Enum.KeyCode.W then
-        control.F = 1
-    elseif input.KeyCode == Enum.KeyCode.S then
-        control.B = -1
-    elseif input.KeyCode == Enum.KeyCode.A then
-        control.L = -1
-    elseif input.KeyCode == Enum.KeyCode.D then
-        control.R = 1
-    end
+local exittab = gui:Tab("Exit")
+exittab:Button("Close Script", function()
+    game:GetService("Players").LocalPlayer:Kick("Close  " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name .. "")
 end)
 
-UIS.InputEnded:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.W then
-        control.F = 0
-    elseif input.KeyCode == Enum.KeyCode.S then
-        control.B = 0
-    elseif input.KeyCode == Enum.KeyCode.A then
-        control.L = 0
-    elseif input.KeyCode == Enum.KeyCode.D then
-        control.R = 0
-    end
-end)
 
--- Fly Toggle
-tab:Toggle("Fly", false, function(value)
-    flying = value
 
-    if flying then
-        character = player.Character or player.CharacterAdded:Wait()
-        humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local Lighting = game:GetService("Lighting")
 
-        bv = Instance.new("BodyVelocity")
-        bv.MaxForce = Vector3.new(999999,999999,999999)
-        bv.Velocity = Vector3.zero
-        bv.Parent = humanoidRootPart
+local timeEnabled = false
+local currentTime = 12
+local originalTime = Lighting.ClockTime
 
-        bg = Instance.new("BodyGyro")
-        bg.MaxTorque = Vector3.new(999999,999999,999999)
-        bg.P = 1000
-        bg.Parent = humanoidRootPart
+visualtab:Toggle("Time Changer", false, function(value)
+    timeEnabled = value
 
-        flyConnection = RunService.RenderStepped:Connect(function()
-            local camera = workspace.CurrentCamera
-            local direction =
-                (camera.CFrame.LookVector * (control.F + control.B)) +
-                (camera.CFrame.RightVector * (control.R + control.L))
-
-            bv.Velocity = direction * flySpeed
-            bg.CFrame = camera.CFrame
-        end)
-
+    if timeEnabled then
+        originalTime = Lighting.ClockTime
+        Lighting.ClockTime = currentTime
     else
-        if flyConnection then
-            flyConnection:Disconnect()
-        end
-
-        if bv then
-            bv:Destroy()
-        end
-
-        if bg then
-            bg:Destroy()
-        end
+        Lighting.ClockTime = originalTime
     end
 end)
 
--- Slider скорости
-tab:Slider("Fly Speed", 0, 100, 15, function(value)
-    flySpeed = value * 2
-end)
+visualtab:Slider("Time", 1, 24, 12, function(value)
+    currentTime = value
 
--- tab:Label("Santamurai TOP")
-
--- tab:Button("Название кнопки", function()
-
--- end)
-
--- tab:Textbox("Название вводить", "Enter", function(value)
-
--- end)
-
--- local list = {1,2,3,4,5,6}
-
--- tab:Dropdown("Название таблицы", list, function(value)
-
--- end)
-
-
-
-
-
-
-
-
-
-
-
-
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local hrp = character:WaitForChild("HumanoidRootPart")
-
--- обновление после смерти
-player.CharacterAdded:Connect(function(char)
-    character = char
-    hrp = char:WaitForChild("HumanoidRootPart")
-end)
-
-local speedEnabled = false
-local speed = 1
-
-tab:Toggle("Speed", false, function(v)
-    speedEnabled = v
-end)
-
-tab:Slider("Speed Amount", 1, 100, 1, function(v)
-    speed = v
-end)
-
-RunService.Heartbeat:Connect(function()
-    if speedEnabled and character and hrp then
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
-
-        if humanoid and humanoid.MoveDirection.Magnitude > 0 then
-            hrp.CFrame = hrp.CFrame + (humanoid.MoveDirection * (speed / 100))
-        end
+    if timeEnabled then
+        Lighting.ClockTime = value
     end
 end)
 
 
 
+local originalMaterials = {}
 
+fpstab:Toggle("Plastic Materials", false, function(value)
 
+    if value then
 
+        -- Сохраняем оригинальные материалы и меняем на Plastic
+        for _, object in ipairs(workspace:GetDescendants()) do
+            if object:IsA("BasePart") then
 
+                if originalMaterials[object] == nil then
+                    originalMaterials[object] = object.Material
+                end
 
-
-
-local UIS = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-
-local player = Players.LocalPlayer
-
-local infJump = false
-
-tab:Toggle("Inf Jump", false, function(v)
-    infJump = v
-end)
-
-UIS.JumpRequest:Connect(function()
-    if infJump then
-        local character = player.Character
-        if character then
-            local humanoid = character:FindFirstChildOfClass("Humanoid")
-
-            if humanoid then
-                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                object.Material = Enum.Material.Plastic
             end
         end
+
+    else
+
+        -- Возвращаем оригинальные материалы
+        for object, material in pairs(originalMaterials) do
+            if object and object.Parent then
+                object.Material = material
+            end
+        end
+
+        -- Очищаем сохранённые материалы
+        originalMaterials = {}
     end
+
+end)
+
+
+
+local originalShadows = {}
+
+fpstab:Toggle("Remove Shadows", false, function(value)
+
+    if value then
+
+        -- Сохраняем оригинальное состояние теней
+        for _, object in ipairs(workspace:GetDescendants()) do
+            if object:IsA("BasePart") then
+
+                if originalShadows[object] == nil then
+                    originalShadows[object] = object.CastShadow
+                end
+
+                object.CastShadow = false
+            end
+        end
+
+    else
+
+        -- Возвращаем оригинальные настройки теней
+        for object, castShadow in pairs(originalShadows) do
+            if object and object.Parent then
+                object.CastShadow = castShadow
+            end
+        end
+
+        originalShadows = {}
+    end
+
+end)
+
+
+local originalLightingEffects = {}
+
+fpstab:Toggle("Remove Light Effects", false, function(value)
+
+    if value then
+
+        -- Сохраняем состояние всех эффектов
+        for _, object in ipairs(game:GetDescendants()) do
+
+            if object:IsA("PointLight")
+            or object:IsA("SpotLight")
+            or object:IsA("SurfaceLight")
+            or object:IsA("BloomEffect")
+            or object:IsA("BlurEffect")
+            or object:IsA("ColorCorrectionEffect")
+            or object:IsA("SunRaysEffect")
+            or object:IsA("DepthOfFieldEffect") then
+
+                if originalLightingEffects[object] == nil then
+                    originalLightingEffects[object] = object.Enabled
+                end
+
+                object.Enabled = false
+            end
+
+        end
+
+    else
+
+        -- Возвращаем эффекты обратно
+        for object, enabled in pairs(originalLightingEffects) do
+            if object and object.Parent then
+                object.Enabled = enabled
+            end
+        end
+
+        originalLightingEffects = {}
+
+    end
+
+end)
+
+
+
+local Terrain = workspace.Terrain
+
+local originalWaterColor = Terrain.WaterColor
+local originalWaterTransparency = Terrain.WaterTransparency
+local originalWaterReflectance = Terrain.WaterReflectance
+local originalWaterWaveSize = Terrain.WaterWaveSize
+local originalWaterWaveSpeed = Terrain.WaterWaveSpeed
+
+fpstab:Toggle("Simple Blue Water", false, function(value)
+
+    if value then
+
+        -- Простая синяя вода
+        Terrain.WaterColor = Color3.fromRGB(0, 120, 255)
+        Terrain.WaterTransparency = 0.25
+        Terrain.WaterReflectance = 0
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+
+    else
+
+        -- Возвращаем оригинальную воду
+        Terrain.WaterColor = originalWaterColor
+        Terrain.WaterTransparency = originalWaterTransparency
+        Terrain.WaterReflectance = originalWaterReflectance
+        Terrain.WaterWaveSize = originalWaterWaveSize
+        Terrain.WaterWaveSpeed = originalWaterWaveSpeed
+
+    end
+
+end)
+
+
+
+local Lighting = game:GetService("Lighting")
+local Terrain = workspace.Terrain
+
+local originalSky = Lighting:FindFirstChildOfClass("Sky")
+local originalClouds = Terrain:FindFirstChildOfClass("Clouds")
+
+fpstab:Toggle("White Sky", false, function(value)
+
+    if value then
+
+        -- Убираем небо
+        if originalSky then
+            originalSky.Parent = nil
+        end
+
+        -- Убираем облака
+        if originalClouds then
+            originalClouds.Parent = nil
+        end
+
+        -- Белый фон
+        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+        Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+
+    else
+
+        -- Возвращаем небо
+        if originalSky then
+            originalSky.Parent = Lighting
+        end
+
+        -- Возвращаем облака
+        if originalClouds then
+            originalClouds.Parent = Terrain
+        end
+
+    end
+
 end)
 
 
@@ -217,76 +264,193 @@ end)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
-local espEnabled = false
-local highlights = {}
+local trailEnabled = false
+local blackTrailEnabled = false
 
-local function removeESP()
-    for _, v in pairs(highlights) do
-        if v then
+
+--// WHITE TRAIL
+
+local function removeTrail()
+    local character = player.Character
+    if not character then return end
+
+    for _, v in pairs(character:GetDescendants()) do
+        if v.Name == "WhiteTrail"
+        or v.Name == "TrailAttachment0"
+        or v.Name == "TrailAttachment1" then
             v:Destroy()
         end
     end
-
-    highlights = {}
 end
 
-local function addESP(player)
-    if player == Players.LocalPlayer then return end
+local function createTrail()
+    local character = player.Character or player.CharacterAdded:Wait()
 
-    local function create(character)
-        if not espEnabled then return end
-        if not character then return end
+    removeTrail()
 
-        -- удаляем старый ESP
-        if highlights[player] then
-            highlights[player]:Destroy()
-        end
+    local root = character:WaitForChild("HumanoidRootPart")
 
-        local highlight = Instance.new("Highlight")
-        highlight.Name = "PlayerESP"
-        highlight.FillTransparency = 0.5
-        highlight.OutlineTransparency = 0
-        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        highlight.Adornee = character
-        highlight.Parent = game.CoreGui
+    local attachment0 = Instance.new("Attachment")
+    attachment0.Name = "TrailAttachment0"
+    attachment0.Position = Vector3.new(0, -1.2, 0)
+    attachment0.Parent = root
 
-        highlights[player] = highlight
-    end
+    local attachment1 = Instance.new("Attachment")
+    attachment1.Name = "TrailAttachment1"
+    attachment1.Position = Vector3.new(0, 1.2, 0)
+    attachment1.Parent = root
 
-    if player.Character then
-        create(player.Character)
-    end
+    local trail = Instance.new("Trail")
+    trail.Name = "WhiteTrail"
 
-    player.CharacterAdded:Connect(function(character)
-        task.wait(1)
-        create(character)
-    end)
+    trail.Attachment0 = attachment0
+    trail.Attachment1 = attachment1
+
+    trail.Color = ColorSequence.new(
+        Color3.fromRGB(255, 255, 255)
+    )
+
+    trail.Lifetime = 2
+    trail.MinLength = 0
+    trail.LightEmission = 1
+    trail.FaceCamera = true
+    trail.Enabled = true
+
+    trail.WidthScale = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.45),
+        NumberSequenceKeypoint.new(1, 0)
+    })
+
+    trail.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.25),
+        NumberSequenceKeypoint.new(1, 1)
+    })
+
+    trail.Parent = root
 end
 
-visualtab:Toggle("ESP", false, function(v)
-    espEnabled = v
 
-    removeESP()
+--// BLACK TRAIL
 
-    if espEnabled then
-        for _, player in pairs(Players:GetPlayers()) do
-            addESP(player)
+local function removeBlackTrail()
+    local character = player.Character
+    if not character then return end
+
+    for _, v in pairs(character:GetDescendants()) do
+        if v.Name == "BlackTrail"
+        or v.Name == "BlackTrailAttachment0"
+        or v.Name == "BlackTrailAttachment1" then
+            v:Destroy()
         end
+    end
+end
+
+local function createBlackTrail()
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    removeBlackTrail()
+
+    local root = character:WaitForChild("HumanoidRootPart")
+
+    local attachment0 = Instance.new("Attachment")
+    attachment0.Name = "BlackTrailAttachment0"
+    attachment0.Position = Vector3.new(0, -1.2, 0)
+    attachment0.Parent = root
+
+    local attachment1 = Instance.new("Attachment")
+    attachment1.Name = "BlackTrailAttachment1"
+    attachment1.Position = Vector3.new(0, 1.2, 0)
+    attachment1.Parent = root
+
+    local trail = Instance.new("Trail")
+    trail.Name = "BlackTrail"
+
+    trail.Attachment0 = attachment0
+    trail.Attachment1 = attachment1
+
+    trail.Color = ColorSequence.new(
+        Color3.fromRGB(0, 0, 0)
+    )
+
+    trail.Lifetime = 2
+    trail.MinLength = 0
+    trail.LightEmission = 0
+    trail.FaceCamera = true
+    trail.Enabled = true
+
+    trail.WidthScale = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.45),
+        NumberSequenceKeypoint.new(1, 0)
+    })
+
+    trail.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.25),
+        NumberSequenceKeypoint.new(1, 1)
+    })
+
+    trail.Parent = root
+end
+
+
+--// TOGGLES
+
+visualtab:Toggle("White Trail", false, function(value)
+    trailEnabled = value
+
+    if value then
+        createTrail()
+    else
+        removeTrail()
     end
 end)
 
-Players.PlayerAdded:Connect(function(player)
-    if espEnabled then
-        addESP(player)
+
+visualtab:Toggle("Black Trail", false, function(value)
+    blackTrailEnabled = value
+
+    if value then
+        createBlackTrail()
+    else
+        removeBlackTrail()
     end
 end)
 
-Players.PlayerRemoving:Connect(function(player)
-    if highlights[player] then
-        highlights[player]:Destroy()
-        highlights[player] = nil
+
+--// RESPAWN
+
+player.CharacterAdded:Connect(function()
+    task.wait(1)
+
+    if trailEnabled then
+        createTrail()
+    end
+
+    if blackTrailEnabled then
+        createBlackTrail()
     end
 end)
 
@@ -452,37 +616,13 @@ end)
 
 
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 
-local player = Players.LocalPlayer
 
-local noclipEnabled = false
-local char = nil
 
-local function setupCharacter(c)
-    char = c
-end
 
-player.CharacterAdded:Connect(setupCharacter)
-setupCharacter(player.Character or player.CharacterAdded:Wait())
 
--- TAB TOGGLE
-tab:Toggle("Noclip", false, function(v)
-    noclipEnabled = v
-end)
 
--- основной цикл
-RunService.Stepped:Connect(function()
-    if not noclipEnabled then return end
-    if not char then return end
 
-    for _, part in pairs(char:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = false
-        end
-    end
-end)
 
 
 
@@ -494,273 +634,6 @@ end)
 
 
 
-
-
-
-local Players = game:GetService("Players")
-
-local espEnabled = false
-local espObjects = {}
-
-local function addESP(plr, char)
-    if plr == Players.LocalPlayer or not char then return end
-
-    local head = char:FindFirstChild("Head")
-    if not head then return end
-
-    if espObjects[plr] then
-        espObjects[plr]:Destroy()
-    end
-
-    local bb = Instance.new("BillboardGui")
-    bb.Size = UDim2.new(0, 120, 0, 25)
-    bb.StudsOffset = Vector3.new(0, 2, 0)
-    bb.AlwaysOnTop = true
-    bb.Parent = head
-
-    local txt = Instance.new("TextLabel")
-    txt.Size = UDim2.new(0.4, 0, 1, 0)
-    txt.BackgroundTransparency = 1
-    txt.Text = plr.DisplayName
-    txt.TextScaled = true
-    txt.Font = Enum.Font.GothamBold
-
-    -- 🔴 КРАСНЫЙ СТИЛЬ
-    txt.TextColor3 = Color3.fromRGB(255, 60, 60)
-    txt.TextStrokeTransparency = 0
-    txt.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-
-    txt.Parent = bb
-
-    espObjects[plr] = bb
-end
-
-local function hook(plr)
-    plr.CharacterAdded:Connect(function(c)
-        task.wait(0.5)
-        if espEnabled then
-            addESP(plr, c)
-        end
-    end)
-
-    if plr.Character and espEnabled then
-        addESP(plr, plr.Character)
-    end
-end
-
-visualtab:Toggle("ESP Names", false, function(v)
-    espEnabled = v
-
-    if not v then
-        for _, g in pairs(espObjects) do
-            g:Destroy()
-        end
-        espObjects = {}
-    else
-        for _, p in pairs(Players:GetPlayers()) do
-            hook(p)
-        end
-    end
-end)
-
-Players.PlayerAdded:Connect(hook)
-
-Players.PlayerRemoving:Connect(function(p)
-    if espObjects[p] then
-        espObjects[p]:Destroy()
-        espObjects[p] = nil
-    end
-end)
-
-
-
-
-
-
-
-
-
-
-
-local Players = game:GetService("Players")
-local UIS = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-
-local player = Players.LocalPlayer
-local camera = workspace.CurrentCamera
-
-local enabled = false
-local holding = false
-local maxDistance = 200
-
-local function getClosestPlayer()
-    local closest = nil
-    local dist = math.huge
-
-    for _, plr in pairs(Players:GetPlayers()) do
-        if plr ~= player and plr.Character then
-            local head = plr.Character:FindFirstChild("Head")
-
-            if head then
-                local mag = (camera.CFrame.Position - head.Position).Magnitude
-
-                if mag < dist and mag <= maxDistance then
-                    dist = mag
-                    closest = head
-                end
-            end
-        end
-    end
-
-    return closest
-end
-
--- TOGGLE
-combattab:Toggle("Aimbot", false, function(v)
-    enabled = v
-end)
-
--- SLIDER ДО 1000
-combattab:Slider("Aimbot Distance", 0, 500, 250, function(v)
-    maxDistance = v
-end)
-
--- RMB hold
-UIS.InputBegan:Connect(function(input, gpe)
-    if gpe then return end
-    if input.UserInputType == Enum.UserInputType.MouseButton2 then
-        holding = true
-    end
-end)
-
-UIS.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton2 then
-        holding = false
-    end
-end)
-
--- AIM LOOP
-RunService.RenderStepped:Connect(function()
-    if not enabled then return end
-    if not holding then return end
-
-    local target = getClosestPlayer()
-    if target then
-        camera.CFrame = camera.CFrame:Lerp(
-            CFrame.new(camera.CFrame.Position, target.Position),
-            0.2
-        )
-    end
-end)
-
-
-
-
-
-
-
-
-
-
-
-
-
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UIS = game:GetService("UserInputService")
-
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-local flying = false
-local flySpeed = 80
-
-local bv
-local bg
-local flyConnection
-
-local control = {
-    F = 0,
-    B = 0,
-    L = 0,
-    R = 0
-}
-
--- Управление
-UIS.InputBegan:Connect(function(input, gpe)
-    if gpe then return end
-
-    if input.KeyCode == Enum.KeyCode.W then
-        control.F = 1
-    elseif input.KeyCode == Enum.KeyCode.S then
-        control.B = -1
-    elseif input.KeyCode == Enum.KeyCode.A then
-        control.L = -1
-    elseif input.KeyCode == Enum.KeyCode.D then
-        control.R = 1
-    end
-end)
-
-UIS.InputEnded:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.W then
-        control.F = 0
-    elseif input.KeyCode == Enum.KeyCode.S then
-        control.B = 0
-    elseif input.KeyCode == Enum.KeyCode.A then
-        control.L = 0
-    elseif input.KeyCode == Enum.KeyCode.D then
-        control.R = 0
-    end
-end)
-
--- Fly Toggle
-cartab:Toggle("CarFly", false, function(value)
-    flying = value
-
-    if flying then
-        character = player.Character or player.CharacterAdded:Wait()
-        humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-        bv = Instance.new("BodyVelocity")
-        bv.MaxForce = Vector3.new(999999,999999,999999)
-        bv.Velocity = Vector3.zero
-        bv.Parent = humanoidRootPart
-
-        bg = Instance.new("BodyGyro")
-        bg.MaxTorque = Vector3.new(999999,999999,999999)
-        bg.P = 1000
-        bg.Parent = humanoidRootPart
-
-        flyConnection = RunService.RenderStepped:Connect(function()
-            local camera = workspace.CurrentCamera
-            local direction =
-                (camera.CFrame.LookVector * (control.F + control.B)) +
-                (camera.CFrame.RightVector * (control.R + control.L))
-
-            bv.Velocity = direction * flySpeed
-            bg.CFrame = camera.CFrame
-        end)
-
-    else
-        if flyConnection then
-            flyConnection:Disconnect()
-        end
-
-        if bv then
-            bv:Destroy()
-        end
-
-        if bg then
-            bg:Destroy()
-        end
-    end
-end)
-
--- Slider скорости
-cartab:Slider("CarFly Speed", 0, 100, 15, function(value)
-    flySpeed = value * 10
-end)
 
 
 
@@ -792,4 +665,15 @@ spawn(function()
 			game:GetService("Players").LocalPlayer:Kick("Please buy the script")
 		end
 	end
+end)	
+
+        end
 end)
+
+
+
+
+
+
+
+
