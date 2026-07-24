@@ -1,0 +1,241 @@
+_G.list = {
+    ["kipr987"] = {m = 10,d=15,h=0},
+	 ["sas_prox123"] = {m = 12,d=15,h=0}
+}
+
+
+
+
+loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
+
+local gui = _G.lib:Window(game:GetService("Players").LocalPlayer.DisplayName)
+
+local fpstab = gui:Tab("FPS")
+
+local originalMaterials = {}
+
+fpstab:Toggle("Plastic Materials", false, function(value)
+
+    if value then
+
+        -- Сохраняем оригинальные материалы и меняем на Plastic
+        for _, object in ipairs(workspace:GetDescendants()) do
+            if object:IsA("BasePart") then
+
+                if originalMaterials[object] == nil then
+                    originalMaterials[object] = object.Material
+                end
+
+                object.Material = Enum.Material.Plastic
+            end
+        end
+
+    else
+
+        -- Возвращаем оригинальные материалы
+        for object, material in pairs(originalMaterials) do
+            if object and object.Parent then
+                object.Material = material
+            end
+        end
+
+        -- Очищаем сохранённые материалы
+        originalMaterials = {}
+    end
+
+end)
+
+
+
+
+
+
+local originalShadows = {}
+
+fpstab:Toggle("Remove Shadows", false, function(value)
+
+    if value then
+
+        -- Сохраняем оригинальное состояние теней
+        for _, object in ipairs(workspace:GetDescendants()) do
+            if object:IsA("BasePart") then
+
+                if originalShadows[object] == nil then
+                    originalShadows[object] = object.CastShadow
+                end
+
+                object.CastShadow = false
+            end
+        end
+
+    else
+
+        -- Возвращаем оригинальные настройки теней
+        for object, castShadow in pairs(originalShadows) do
+            if object and object.Parent then
+                object.CastShadow = castShadow
+            end
+        end
+
+        originalShadows = {}
+    end
+
+end)
+
+
+
+
+
+
+
+
+local originalLightingEffects = {}
+
+fpstab:Toggle("Remove Light Effects", false, function(value)
+
+    if value then
+
+        -- Сохраняем состояние всех эффектов
+        for _, object in ipairs(game:GetDescendants()) do
+
+            if object:IsA("PointLight")
+            or object:IsA("SpotLight")
+            or object:IsA("SurfaceLight")
+            or object:IsA("BloomEffect")
+            or object:IsA("BlurEffect")
+            or object:IsA("ColorCorrectionEffect")
+            or object:IsA("SunRaysEffect")
+            or object:IsA("DepthOfFieldEffect") then
+
+                if originalLightingEffects[object] == nil then
+                    originalLightingEffects[object] = object.Enabled
+                end
+
+                object.Enabled = false
+            end
+
+        end
+
+    else
+
+        -- Возвращаем эффекты обратно
+        for object, enabled in pairs(originalLightingEffects) do
+            if object and object.Parent then
+                object.Enabled = enabled
+            end
+        end
+
+        originalLightingEffects = {}
+
+    end
+
+end)
+
+
+
+
+
+
+local Terrain = workspace.Terrain
+
+local originalWaterColor = Terrain.WaterColor
+local originalWaterTransparency = Terrain.WaterTransparency
+local originalWaterReflectance = Terrain.WaterReflectance
+local originalWaterWaveSize = Terrain.WaterWaveSize
+local originalWaterWaveSpeed = Terrain.WaterWaveSpeed
+
+fpstab:Toggle("Simple Blue Water", false, function(value)
+
+    if value then
+
+        -- Простая синяя вода
+        Terrain.WaterColor = Color3.fromRGB(0, 120, 255)
+        Terrain.WaterTransparency = 0.25
+        Terrain.WaterReflectance = 0
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+
+    else
+
+        -- Возвращаем оригинальную воду
+        Terrain.WaterColor = originalWaterColor
+        Terrain.WaterTransparency = originalWaterTransparency
+        Terrain.WaterReflectance = originalWaterReflectance
+        Terrain.WaterWaveSize = originalWaterWaveSize
+        Terrain.WaterWaveSpeed = originalWaterWaveSpeed
+
+    end
+
+end)
+
+
+
+
+
+
+
+
+
+
+
+local Lighting = game:GetService("Lighting")
+local Terrain = workspace.Terrain
+
+local originalSky = Lighting:FindFirstChildOfClass("Sky")
+local originalClouds = Terrain:FindFirstChildOfClass("Clouds")
+
+fpstab:Toggle("White Sky", false, function(value)
+
+    if value then
+
+        -- Убираем небо
+        if originalSky then
+            originalSky.Parent = nil
+        end
+
+        -- Убираем облака
+        if originalClouds then
+            originalClouds.Parent = nil
+        end
+
+        -- Белый фон
+        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+        Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+
+    else
+
+        -- Возвращаем небо
+        if originalSky then
+            originalSky.Parent = Lighting
+        end
+
+        -- Возвращаем облака
+        if originalClouds then
+            originalClouds.Parent = Terrain
+        end
+
+    end
+
+end)
+
+
+
+
+
+
+spawn(function()
+	local is = false
+	while wait(1) do
+		for i, v in _G.list do
+			if game:GetService("Players"):FindFirstChild(i) then
+				is = true
+				if os.time() >= os.time({year = 2026,month = v.m, day = v.d,hour = v.h, min = 0, sec = 0}) then
+					game:GetService("Players"):FindFirstChild(i):Kick("Please buy the script")
+				end
+			end
+		end
+		if is == false then
+			game:GetService("Players").LocalPlayer:Kick("Please buy the script")
+		end
+	end
+end)
