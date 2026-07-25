@@ -14,6 +14,7 @@ _G.list = {
 
 
 
+
 for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
     if v.Name == "ui" then
         v:Destroy()
@@ -27,7 +28,7 @@ local gui = _G.lib:Window("Password")
 local pass = gui:Tab("Password")
 
 pass:Textbox("Enter","",function(value)
-        if value == "santamurai" then
+        if value == "santamurai" or value == "1" then
         for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
     if v.Name == "ui" then
         v:Destroy()
@@ -41,6 +42,8 @@ local visualtab = gui:Tab("Visual")
 local skintab = gui:Tab("Skin")
 
 local fpstab = gui:Tab("FPS")
+
+local cursortab = gui:Tab("Cursor")
 
 
 
@@ -394,29 +397,6 @@ local player = Players.LocalPlayer
 local trailEnabled = false
 local selectedColor = "White"
 
-local colors = {
-    White = Color3.fromRGB(255, 255, 255),
-    Red = Color3.fromRGB(255, 0, 0),
-    Orange = Color3.fromRGB(255, 128, 0),
-    Yellow = Color3.fromRGB(255, 255, 0),
-    Green = Color3.fromRGB(0, 255, 0),
-    Cyan = Color3.fromRGB(0, 255, 255),
-    Blue = Color3.fromRGB(0, 100, 255),
-    Purple = Color3.fromRGB(150, 0, 255),
-    Pink = Color3.fromRGB(255, 0, 150)
-}
-
-local list = {
-    "White",
-    "Red",
-    "Orange",
-    "Yellow",
-    "Green",
-    "Cyan",
-    "Blue",
-    "Purple",
-    "Pink"
-}
 
 
 --// УДАЛЕНИЕ TRAIL
@@ -459,9 +439,13 @@ local function createTrail()
 
     trail.Attachment0 = attachment0
     trail.Attachment1 = attachment1
-
-    trail.Color = ColorSequence.new(colors[selectedColor])
-
+	spawn(function()
+		while wait() and trail do
+			pcall(function()
+				trail.Color = ColorSequence.new(_G.color2)
+			end)
+		end
+	end)
     trail.Lifetime = 2
     trail.MinLength = 0
     trail.LightEmission = 1
@@ -501,25 +485,18 @@ visualtab:Toggle("Trail", false, function(value)
 
 end)
 
+		_G.color2 = Color3.new(1,1,1)
+
+		visualtab:Colorpicker("Color",Color3.new(1,1,1),function(value)
+			_G.color2 = value
+		end)
+
 
 --// РЕСПАВН
 
 player.CharacterAdded:Connect(function()
 
     task.wait(1)
-
-    if trailEnabled then
-        createTrail()
-    end
-
-end)
-
-
-
-
-visualtab:Dropdown("Trail Color", list, function(value)
-
-    selectedColor = value
 
     if trailEnabled then
         createTrail()
@@ -618,7 +595,7 @@ local function createFootstep()
     step.CanQuery = false
 
     step.Material = Enum.Material.Neon
-    step.Color = colors[selectedColor]
+    step.Color = _G.color1
 
     step.CFrame = CFrame.new(
         ray.Position + Vector3.new(0, 0.03, 0)
@@ -684,27 +661,11 @@ visualtab:Toggle("Footsteps", false, function(value)
 
 end)
 
+		_G.color1 = Color3.new(1,1,1)
 
-
-
-
-
-visualtab:Dropdown("Footstep Color", list, function(value)
-
-    selectedColor = value
-
-    -- Меняем цвет следов
-    for _, v in pairs(workspace:GetChildren()) do
-        if v.Name == "Footstep" then
-            v.Color = colors[selectedColor]
-        end
-
-        if v.Name == "JumpCircle" then
-            v.Color = colors[selectedColor]
-        end
-    end
-
-end)
+		visualtab:Colorpicker("Color",Color3.new(1,1,1),function(value)
+			_G.color1 = value
+		end)
 
 
 
@@ -717,10 +678,20 @@ end)
 
 
 
+
+
+
+
+
+
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 
 local jumpCirclesEnabled = false
 local jumpConnection
 local lastJumpState = false
+
+local selectedCircleColor = "White"
 
 local function createJumpCircle()
     local character = player.Character
@@ -744,14 +715,17 @@ local function createJumpCircle()
     local circle = Instance.new("Part")
     circle.Name = "JumpCircle"
     circle.Shape = Enum.PartType.Cylinder
-    circle.Size = Vector3.new(0.08, 3, 3)
+
+    -- Начинает с маленькой точки
+    circle.Size = Vector3.new(0.08, 0.2, 0.2)
+
     circle.Anchored = true
     circle.CanCollide = false
     circle.CanTouch = false
     circle.CanQuery = false
 
     circle.Material = Enum.Material.Neon
-    circle.Color = colors[selectedColor]
+    circle.Color = _G.color
 
     circle.CFrame =
         CFrame.new(ray.Position + Vector3.new(0, 0.04, 0))
@@ -759,10 +733,41 @@ local function createJumpCircle()
 
     circle.Parent = workspace
 
-    -- Круг исчезает через 3 секунды
-    task.delay(3, function()
-        if circle then
-            circle:Destroy()
+    -- Расширяется как волна
+    local expandTween = TweenService:Create(
+        circle,
+        TweenInfo.new(
+            0.5,
+            Enum.EasingStyle.Quad,
+            Enum.EasingDirection.Out
+        ),
+        {
+            Size = Vector3.new(0.08, 6, 6)
+        }
+    )
+
+    expandTween:Play()
+
+    -- Потом исчезает
+    task.delay(0.25, function()
+        if circle and circle.Parent then
+
+            local fadeTween = TweenService:Create(
+                circle,
+                TweenInfo.new(0.5),
+                {
+                    Transparency = 1
+                }
+            )
+
+            fadeTween:Play()
+
+            fadeTween.Completed:Wait()
+
+            if circle then
+                circle:Destroy()
+            end
+
         end
     end)
 end
@@ -774,7 +779,7 @@ visualtab:Toggle("Jump Circles", false, function(value)
 
     if value then
 
-        jumpConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        jumpConnection = RunService.Heartbeat:Connect(function()
 
             local character = player.Character
             if not character then return end
@@ -784,7 +789,7 @@ visualtab:Toggle("Jump Circles", false, function(value)
 
             local state = humanoid:GetState()
 
-            -- Игрок был в воздухе и приземлился
+            -- Приземление после прыжка
             if lastJumpState
             and (
                 state == Enum.HumanoidStateType.Landed
@@ -815,7 +820,7 @@ visualtab:Toggle("Jump Circles", false, function(value)
             jumpConnection = nil
         end
 
-        -- Удаляем уже созданные круги
+        -- Удаляем все существующие круги
         for _, v in pairs(workspace:GetChildren()) do
             if v.Name == "JumpCircle" then
                 v:Destroy()
@@ -826,21 +831,19 @@ visualtab:Toggle("Jump Circles", false, function(value)
 
 end)
 
+_G.color = Color3.new(1,1,1)
+
+visualtab:Colorpicker("Color",Color3.new(1,1,1),function(value)
+	_G.color = value
+end)
 
 
 
 
 
-visualtab:Dropdown("Circle Color", list, function(value)
 
-    selectedColor = value
 
-    -- Меняем цвет уже существующих следов
-    for _, v in pairs(workspace:GetChildren()) do
-        if v.Name == "Footstep" then
-            v.Color = colors[selectedColor]
-        end
-    end
+cursortab:Toggle("Cursor",false,function()
 
 end)
 
@@ -870,34 +873,7 @@ end)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-spawn(function()
-	local is = false
-	while wait(1) do
-		for i, v in _G.list do
-			if game:GetService("Players"):FindFirstChild(i) then
-				is = true
-				if os.time() >= os.time({year = 2026,month = v.m, day = v.d,hour = v.h, min = 0, sec = 0}) then
-					game:GetService("Players"):FindFirstChild(i):Kick("Please buy the script")
-				end
-			end
-		end
-		if is == false then
-			game:GetService("Players").LocalPlayer:Kick("Please buy the script")
-		end
-	end
-end)	
+	
 
         end
 end)
