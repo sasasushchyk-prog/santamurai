@@ -217,249 +217,6 @@ end)
 
 
 
-local Lighting = game:GetService("Lighting")
-local Terrain = workspace.Terrain
-
-local originalSky = Lighting:FindFirstChildOfClass("Sky")
-local originalClouds = Terrain:FindFirstChildOfClass("Clouds")
-
-fpstab:Toggle("White Sky", false, function(value)
-
-    if value then
-
-        -- Убираем небо
-        if originalSky then
-            originalSky.Parent = nil
-        end
-
-        -- Убираем облака
-        if originalClouds then
-            originalClouds.Parent = nil
-        end
-
-        -- Белый фон
-        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
-        Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
-
-    else
-
-        -- Возвращаем небо
-        if originalSky then
-            originalSky.Parent = Lighting
-        end
-
-        -- Возвращаем облака
-        if originalClouds then
-            originalClouds.Parent = Terrain
-        end
-
-    end
-
-end)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-
-local trailEnabled = false
-local blackTrailEnabled = false
-
-
---// WHITE TRAIL
-
-local function removeTrail()
-    local character = player.Character
-    if not character then return end
-
-    for _, v in pairs(character:GetDescendants()) do
-        if v.Name == "WhiteTrail"
-        or v.Name == "TrailAttachment0"
-        or v.Name == "TrailAttachment1" then
-            v:Destroy()
-        end
-    end
-end
-
-local function createTrail()
-    local character = player.Character or player.CharacterAdded:Wait()
-
-    removeTrail()
-
-    local root = character:WaitForChild("HumanoidRootPart")
-
-    local attachment0 = Instance.new("Attachment")
-    attachment0.Name = "TrailAttachment0"
-    attachment0.Position = Vector3.new(0, -1.2, 0)
-    attachment0.Parent = root
-
-    local attachment1 = Instance.new("Attachment")
-    attachment1.Name = "TrailAttachment1"
-    attachment1.Position = Vector3.new(0, 1.2, 0)
-    attachment1.Parent = root
-
-    local trail = Instance.new("Trail")
-    trail.Name = "WhiteTrail"
-
-    trail.Attachment0 = attachment0
-    trail.Attachment1 = attachment1
-
-    trail.Color = ColorSequence.new(
-        Color3.fromRGB(255, 255, 255)
-    )
-
-    trail.Lifetime = 2
-    trail.MinLength = 0
-    trail.LightEmission = 1
-    trail.FaceCamera = true
-    trail.Enabled = true
-
-    trail.WidthScale = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0.45),
-        NumberSequenceKeypoint.new(1, 0)
-    })
-
-    trail.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0.25),
-        NumberSequenceKeypoint.new(1, 1)
-    })
-
-    trail.Parent = root
-end
-
-
---// BLACK TRAIL
-
-local function removeBlackTrail()
-    local character = player.Character
-    if not character then return end
-
-    for _, v in pairs(character:GetDescendants()) do
-        if v.Name == "BlackTrail"
-        or v.Name == "BlackTrailAttachment0"
-        or v.Name == "BlackTrailAttachment1" then
-            v:Destroy()
-        end
-    end
-end
-
-local function createBlackTrail()
-    local character = player.Character or player.CharacterAdded:Wait()
-
-    removeBlackTrail()
-
-    local root = character:WaitForChild("HumanoidRootPart")
-
-    local attachment0 = Instance.new("Attachment")
-    attachment0.Name = "BlackTrailAttachment0"
-    attachment0.Position = Vector3.new(0, -1.2, 0)
-    attachment0.Parent = root
-
-    local attachment1 = Instance.new("Attachment")
-    attachment1.Name = "BlackTrailAttachment1"
-    attachment1.Position = Vector3.new(0, 1.2, 0)
-    attachment1.Parent = root
-
-    local trail = Instance.new("Trail")
-    trail.Name = "BlackTrail"
-
-    trail.Attachment0 = attachment0
-    trail.Attachment1 = attachment1
-
-    trail.Color = ColorSequence.new(
-        Color3.fromRGB(0, 0, 0)
-    )
-
-    trail.Lifetime = 2
-    trail.MinLength = 0
-    trail.LightEmission = 0
-    trail.FaceCamera = true
-    trail.Enabled = true
-
-    trail.WidthScale = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0.45),
-        NumberSequenceKeypoint.new(1, 0)
-    })
-
-    trail.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0.25),
-        NumberSequenceKeypoint.new(1, 1)
-    })
-
-    trail.Parent = root
-end
-
-
---// TOGGLES
-
-visualtab:Toggle("White Trail", false, function(value)
-    trailEnabled = value
-
-    if value then
-        createTrail()
-    else
-        removeTrail()
-    end
-end)
-
-
-visualtab:Toggle("Black Trail", false, function(value)
-    blackTrailEnabled = value
-
-    if value then
-        createBlackTrail()
-    else
-        removeBlackTrail()
-    end
-end)
-
-
---// RESPAWN
-
-player.CharacterAdded:Connect(function()
-    task.wait(1)
-
-    if trailEnabled then
-        createTrail()
-    end
-
-    if blackTrailEnabled then
-        createBlackTrail()
-    end
-end)
-
-
-
-
-
-
 
 
 
@@ -624,6 +381,473 @@ end)
 
 
 
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local trailEnabled = false
+local selectedColor = "White"
+
+local colors = {
+    White = Color3.fromRGB(255, 255, 255),
+    Red = Color3.fromRGB(255, 0, 0),
+    Orange = Color3.fromRGB(255, 128, 0),
+    Yellow = Color3.fromRGB(255, 255, 0),
+    Green = Color3.fromRGB(0, 255, 0),
+    Cyan = Color3.fromRGB(0, 255, 255),
+    Blue = Color3.fromRGB(0, 100, 255),
+    Purple = Color3.fromRGB(150, 0, 255),
+    Pink = Color3.fromRGB(255, 0, 150)
+}
+
+local list = {
+    "White",
+    "Red",
+    "Orange",
+    "Yellow",
+    "Green",
+    "Cyan",
+    "Blue",
+    "Purple",
+    "Pink"
+}
+
+
+--// УДАЛЕНИЕ TRAIL
+
+local function removeTrail()
+    local character = player.Character
+    if not character then return end
+
+    for _, v in pairs(character:GetDescendants()) do
+        if v.Name == "ColorTrail"
+        or v.Name == "ColorTrailAttachment0"
+        or v.Name == "ColorTrailAttachment1" then
+            v:Destroy()
+        end
+    end
+end
+
+
+--// СОЗДАНИЕ TRAIL
+
+local function createTrail()
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    removeTrail()
+
+    local root = character:WaitForChild("HumanoidRootPart")
+
+    local attachment0 = Instance.new("Attachment")
+    attachment0.Name = "ColorTrailAttachment0"
+    attachment0.Position = Vector3.new(0, -1.2, 0)
+    attachment0.Parent = root
+
+    local attachment1 = Instance.new("Attachment")
+    attachment1.Name = "ColorTrailAttachment1"
+    attachment1.Position = Vector3.new(0, 1.2, 0)
+    attachment1.Parent = root
+
+    local trail = Instance.new("Trail")
+    trail.Name = "ColorTrail"
+
+    trail.Attachment0 = attachment0
+    trail.Attachment1 = attachment1
+
+    trail.Color = ColorSequence.new(colors[selectedColor])
+
+    trail.Lifetime = 2
+    trail.MinLength = 0
+    trail.LightEmission = 1
+    trail.FaceCamera = true
+    trail.Enabled = true
+
+    trail.WidthScale = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.45),
+        NumberSequenceKeypoint.new(1, 0)
+    })
+
+    trail.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.25),
+        NumberSequenceKeypoint.new(1, 1)
+    })
+
+    trail.Parent = root
+end
+
+
+--// ВЫБОР ЦВЕТА
+
+
+
+
+--// TOGGLE TRAIL
+
+visualtab:Toggle("Trail", false, function(value)
+
+    trailEnabled = value
+
+    if value then
+        createTrail()
+    else
+        removeTrail()
+    end
+
+end)
+
+
+--// РЕСПАВН
+
+player.CharacterAdded:Connect(function()
+
+    task.wait(1)
+
+    if trailEnabled then
+        createTrail()
+    end
+
+end)
+
+
+
+
+visualtab:Dropdown("Trail Color", list, function(value)
+
+    selectedColor = value
+
+    if trailEnabled then
+        createTrail()
+    end
+
+end)
+
+
+
+local Lighting = game:GetService("Lighting")
+local Terrain = workspace.Terrain
+
+local originalSky = Lighting:FindFirstChildOfClass("Sky")
+local originalClouds = Terrain:FindFirstChildOfClass("Clouds")
+
+fpstab:Toggle("White Sky", false, function(value)
+
+    if value then
+
+        -- Убираем небо
+        if originalSky then
+            originalSky.Parent = nil
+        end
+
+        -- Убираем облака
+        if originalClouds then
+            originalClouds.Parent = nil
+        end
+
+        -- Белый фон
+        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+        Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+
+    else
+
+        -- Возвращаем небо
+        if originalSky then
+            originalSky.Parent = Lighting
+        end
+
+        -- Возвращаем облака
+        if originalClouds then
+            originalClouds.Parent = Terrain
+        end
+
+    end
+
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local RunService = game:GetService("RunService")
+
+local lastStepPosition = nil
+local stepConnection
+
+local function createFootstep()
+    local character = player.Character
+    if not character then return end
+
+    local root = character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+
+    local rayParams = RaycastParams.new()
+    rayParams.FilterType = Enum.RaycastFilterType.Exclude
+    rayParams.FilterDescendantsInstances = {character}
+
+    local ray = workspace:Raycast(
+        root.Position,
+        Vector3.new(0, -6, 0),
+        rayParams
+    )
+
+    if not ray then return end
+
+    local step = Instance.new("Part")
+    step.Name = "Footstep"
+    step.Size = Vector3.new(0.8, 0.03, 1.2)
+    step.Anchored = true
+    step.CanCollide = false
+    step.CanTouch = false
+    step.CanQuery = false
+
+    step.Material = Enum.Material.Neon
+    step.Color = colors[selectedColor]
+
+    step.CFrame = CFrame.new(
+        ray.Position + Vector3.new(0, 0.03, 0)
+    ) * CFrame.Angles(
+        0,
+        math.rad(root.Orientation.Y),
+        0
+    )
+
+    step.Parent = workspace
+
+    -- След исчезает через 3 секунды
+    task.delay(3, function()
+        if step then
+            step:Destroy()
+        end
+    end)
+end
+
+
+visualtab:Toggle("Footsteps", false, function(value)
+
+    footstepsEnabled = value
+
+    if value then
+
+        lastStepPosition = nil
+
+        stepConnection = RunService.Heartbeat:Connect(function()
+
+            local character = player.Character
+            if not character then return end
+
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            local root = character:FindFirstChild("HumanoidRootPart")
+
+            if not humanoid or not root then return end
+
+            -- Проверяем, что игрок действительно идёт
+            if humanoid.MoveDirection.Magnitude > 0 then
+
+                if not lastStepPosition
+                or (root.Position - lastStepPosition).Magnitude >= 2 then
+
+                    lastStepPosition = root.Position
+
+                    createFootstep()
+
+                end
+
+            end
+
+        end)
+
+    else
+
+        if stepConnection then
+            stepConnection:Disconnect()
+            stepConnection = nil
+        end
+
+    end
+
+end)
+
+
+
+
+
+
+visualtab:Dropdown("Footstep Color", list, function(value)
+
+    selectedColor = value
+
+    -- Меняем цвет следов
+    for _, v in pairs(workspace:GetChildren()) do
+        if v.Name == "Footstep" then
+            v.Color = colors[selectedColor]
+        end
+
+        if v.Name == "JumpCircle" then
+            v.Color = colors[selectedColor]
+        end
+    end
+
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+local jumpCirclesEnabled = false
+local jumpConnection
+local lastJumpState = false
+
+local function createJumpCircle()
+    local character = player.Character
+    if not character then return end
+
+    local root = character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+
+    local rayParams = RaycastParams.new()
+    rayParams.FilterType = Enum.RaycastFilterType.Exclude
+    rayParams.FilterDescendantsInstances = {character}
+
+    local ray = workspace:Raycast(
+        root.Position,
+        Vector3.new(0, -10, 0),
+        rayParams
+    )
+
+    if not ray then return end
+
+    local circle = Instance.new("Part")
+    circle.Name = "JumpCircle"
+    circle.Shape = Enum.PartType.Cylinder
+    circle.Size = Vector3.new(0.08, 3, 3)
+    circle.Anchored = true
+    circle.CanCollide = false
+    circle.CanTouch = false
+    circle.CanQuery = false
+
+    circle.Material = Enum.Material.Neon
+    circle.Color = colors[selectedColor]
+
+    circle.CFrame =
+        CFrame.new(ray.Position + Vector3.new(0, 0.04, 0))
+        * CFrame.Angles(0, 0, math.rad(90))
+
+    circle.Parent = workspace
+
+    -- Круг исчезает через 3 секунды
+    task.delay(3, function()
+        if circle then
+            circle:Destroy()
+        end
+    end)
+end
+
+
+visualtab:Toggle("Jump Circles", false, function(value)
+
+    jumpCirclesEnabled = value
+
+    if value then
+
+        jumpConnection = game:GetService("RunService").Heartbeat:Connect(function()
+
+            local character = player.Character
+            if not character then return end
+
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if not humanoid then return end
+
+            local state = humanoid:GetState()
+
+            -- Игрок был в воздухе и приземлился
+            if lastJumpState
+            and (
+                state == Enum.HumanoidStateType.Landed
+                or state == Enum.HumanoidStateType.Running
+            ) then
+
+                createJumpCircle()
+
+            end
+
+            if state == Enum.HumanoidStateType.Freefall
+            or state == Enum.HumanoidStateType.Jumping then
+
+                lastJumpState = true
+
+            else
+
+                lastJumpState = false
+
+            end
+
+        end)
+
+    else
+
+        if jumpConnection then
+            jumpConnection:Disconnect()
+            jumpConnection = nil
+        end
+
+        -- Удаляем уже созданные круги
+        for _, v in pairs(workspace:GetChildren()) do
+            if v.Name == "JumpCircle" then
+                v:Destroy()
+            end
+        end
+
+    end
+
+end)
+
+
+
+
+
+
+visualtab:Dropdown("Circle Color", list, function(value)
+
+    selectedColor = value
+
+    -- Меняем цвет уже существующих следов
+    for _, v in pairs(workspace:GetChildren()) do
+        if v.Name == "Footstep" then
+            v.Color = colors[selectedColor]
+        end
+    end
+
+end)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -670,11 +894,3 @@ end)
 
         end
 end)
-
-
-
-
-
-
-
-
