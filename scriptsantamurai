@@ -15,6 +15,7 @@ _G.list = {
 
 
 
+
 for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
     if v.Name == "ui" then
         v:Destroy()
@@ -28,7 +29,7 @@ local gui = _G.lib:Window("Password")
 local pass = gui:Tab("Password")
 
 pass:Textbox("Enter","",function(value)
-        if value == "santamurai" or value == "1" then
+        if value == "santamurai" then
         for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
     if v.Name == "ui" then
         v:Destroy()
@@ -39,11 +40,12 @@ local gui = _G.lib:Window(game:GetService("Players").LocalPlayer.DisplayName)
 
 local visualtab = gui:Tab("Visual")
 
+local crosshairtab = gui:Tab("Crosshair")
+
 local skintab = gui:Tab("Skin")
 
 local fpstab = gui:Tab("FPS")
 
-local cursortab = gui:Tab("Cursor")
 
 
 
@@ -843,9 +845,73 @@ end)
 
 
 
-cursortab:Toggle("Cursor",false,function()
 
+
+
+
+
+
+
+
+--// CENTER CROSSHAIR
+
+local crosshairEnabled = false
+local crosshair
+local crosshairSize = 3
+_G.color = Color3.new(1, 1, 1)
+
+crosshairtab:Toggle("Crosshair", false, function(value)
+    crosshairEnabled = value
+
+    if value then
+        crosshair = Drawing.new("Circle")
+        crosshair.Radius = crosshairSize
+        crosshair.Filled = true
+        crosshair.Color = _G.color
+        crosshair.Transparency = 1
+        crosshair.Visible = true
+
+        task.spawn(function()
+            while crosshairEnabled and crosshair do
+                local camera = workspace.CurrentCamera
+                local viewportSize = camera.ViewportSize
+
+                crosshair.Position = Vector2.new(
+                    viewportSize.X / 2,
+                    viewportSize.Y / 2
+                )
+
+                task.wait()
+            end
+        end)
+
+    else
+        if crosshair then
+            crosshair:Remove()
+            crosshair = nil
+        end
+    end
 end)
+
+
+crosshairtab:Colorpicker("Crosshair Color", Color3.new(1, 1, 1), function(value)
+    _G.color = value
+
+    if crosshair then
+        crosshair.Color = value
+    end
+end)
+
+
+crosshairtab:Slider("Crosshair Size", 1, 10, 3, function(value)
+    crosshairSize = value
+
+    if crosshair then
+        crosshair.Radius = value
+    end
+end)
+
+
 
 
 
