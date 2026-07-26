@@ -14,8 +14,6 @@ _G.list = {
 
 
 
-
-
 for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
     if v.Name == "ui" then
         v:Destroy()
@@ -36,9 +34,11 @@ pass:Textbox("Enter","",function(value)
     end
 end
 loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
-local gui = _G.lib:Window(game:GetService("Players").LocalPlayer.DisplayName)
+local gui = _G.lib:Window("Sky Visuals")
 
 local visualtab = gui:Tab("Visual")
+
+local soundtab = gui:Tab("Music")
 
 local crosshairtab = gui:Tab("Crosshair")
 
@@ -910,6 +910,125 @@ crosshairtab:Slider("Crosshair Size", 1, 10, 3, function(value)
         crosshair.Radius = value
     end
 end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local SoundService = game:GetService("SoundService")
+
+local sound = Instance.new("Sound")
+sound.Name = "CustomSound"
+sound.Volume = 1
+sound.Looped = false
+sound.Parent = SoundService
+
+soundtab:Textbox("Music ID", "Введи ID звука", function(value)
+
+    local id = tostring(value):match("%d+")
+
+    if not id then
+        return
+    end
+
+    sound:Stop()
+    sound.SoundId = "rbxassetid://" .. id
+
+    task.wait(0.5)
+
+    sound:Play()
+
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+soundtab:Slider("Music Volume", 1, 100, 1, function(value)
+
+    -- 1 = 0.1 Volume
+    -- 100 = 10 Volume
+    sound.Volume = value / 10
+
+end)
+
+
+
+
+
+
+soundtab:Toggle("Auto Replay", false, function(value)
+
+    autoReplay = value
+
+    if not value then
+        sound:Stop()
+    end
+
+end)
+
+sound.Ended:Connect(function()
+
+    if autoReplay then
+        sound:Play()
+    end
+
+end)
+
+
+
+
+
+soundtab:Button("Stop Music", function()
+    sound:Stop()
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
