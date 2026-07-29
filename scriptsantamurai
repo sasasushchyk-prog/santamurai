@@ -29,7 +29,7 @@ local gui = _G.lib:Window("Password")
 local pass = gui:Tab("Password")
 
 pass:Textbox("Enter","",function(value)
-        if value == "santamurai" then
+        if value == "santamurai" or value == "1" then
         for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
     if v.Name == "ui" then
         v:Destroy()
@@ -47,6 +47,8 @@ local crosshairtab = gui:Tab("Crosshair")
 local skintab = gui:Tab("Skin")
 
 local fpstab = gui:Tab("FPS")
+
+
 
 
 
@@ -511,41 +513,76 @@ end)
 
 
 local Lighting = game:GetService("Lighting")
-local Terrain = workspace.Terrain
+local Terrain = workspace:FindFirstChild("Terrain")
 
-local originalSky = Lighting:FindFirstChildOfClass("Sky")
-local originalClouds = Terrain:FindFirstChildOfClass("Clouds")
+local savedInstances = {}
+local enabled = false
 
-fpstab:Toggle("White Sky", false, function(value)
+fpstab:Toggle("White Sky", false, function(state)
 
-    if value then
+    if state and not enabled then
+        enabled = true
 
-        -- Убираем небо
-        if originalSky then
-            originalSky.Parent = nil
+        -- Сохраняем и убираем все эффекты из Lighting
+        for _, obj in ipairs(Lighting:GetChildren()) do
+            if obj:IsA("Sky")
+            or obj:IsA("Atmosphere")
+            or obj:IsA("BloomEffect")
+            or obj:IsA("SunRaysEffect")
+            or obj:IsA("ColorCorrectionEffect")
+            or obj:IsA("BlurEffect")
+            or obj:IsA("DepthOfFieldEffect") then
+
+                table.insert(savedInstances, obj)
+                obj.Parent = nil
+            end
         end
 
         -- Убираем облака
-        if originalClouds then
-            originalClouds.Parent = nil
+        if Terrain then
+            local clouds = Terrain:FindFirstChildOfClass("Clouds")
+            if clouds then
+                table.insert(savedInstances, clouds)
+                clouds.Parent = nil
+            end
         end
 
-        -- Белый фон
-        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
-        Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+        -- Полностью белое небо
+        Lighting.ClockTime = 14
+        Lighting.Brightness = 10
+        Lighting.GlobalShadows = false
+        Lighting.FogStart = 100000
+        Lighting.FogEnd = 100001
+        Lighting.Ambient = Color3.new(1,1,1)
+        Lighting.OutdoorAmbient = Color3.new(1,1,1)
 
-    else
+        local sky = Instance.new("Sky")
+        sky.SkyboxBk = "rbxassetid://1"
+        sky.SkyboxDn = "rbxassetid://1"
+        sky.SkyboxFt = "rbxassetid://1"
+        sky.SkyboxLf = "rbxassetid://1"
+        sky.SkyboxRt = "rbxassetid://1"
+        sky.SkyboxUp = "rbxassetid://1"
+        sky.Name = "__WhiteSky"
+        sky.Parent = Lighting
 
-        -- Возвращаем небо
-        if originalSky then
-            originalSky.Parent = Lighting
+    elseif not state and enabled then
+        enabled = false
+
+        local whiteSky = Lighting:FindFirstChild("__WhiteSky")
+        if whiteSky then
+            whiteSky:Destroy()
         end
 
-        -- Возвращаем облака
-        if originalClouds then
-            originalClouds.Parent = Terrain
+        for _, obj in ipairs(savedInstances) do
+            if obj:IsA("Clouds") then
+                obj.Parent = Terrain
+            else
+                obj.Parent = Lighting
+            end
         end
 
+        table.clear(savedInstances)
     end
 
 end)
@@ -1011,6 +1048,7 @@ end)
 soundtab:Button("Stop Music", function()
     sound:Stop()
 end)
+
 
 
 
