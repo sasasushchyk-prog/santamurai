@@ -15,8 +15,6 @@ _G.list = {
 }
 
 
-
-
 for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
     if v.Name == "ui" then
         v:Destroy()
@@ -1104,7 +1102,7 @@ visualtab:Colorpicker("Fire Color", Color3.new(1,1,1), function(value)
 	_G.color2 = value
 
 	if _G.FireEmitter then
-		_G.FireEmitter.Color = ColorSequence.new(value)a
+		_G.FireEmitter.Color = ColorSequence.new(value)
 	end
 
 	if _G.FireLight then
