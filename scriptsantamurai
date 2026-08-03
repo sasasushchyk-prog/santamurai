@@ -513,85 +513,6 @@ end)
 
 
 
-local Lighting = game:GetService("Lighting")
-local Terrain = workspace:FindFirstChild("Terrain")
-
-local savedInstances = {}
-local enabled = false
-
-fpstab:Toggle("White Sky", false, function(state)
-
-    if state and not enabled then
-        enabled = true
-
-        -- Сохраняем и убираем все эффекты из Lighting
-        for _, obj in ipairs(Lighting:GetChildren()) do
-            if obj:IsA("Sky")
-            or obj:IsA("Atmosphere")
-            or obj:IsA("BloomEffect")
-            or obj:IsA("SunRaysEffect")
-            or obj:IsA("ColorCorrectionEffect")
-            or obj:IsA("BlurEffect")
-            or obj:IsA("DepthOfFieldEffect") then
-
-                table.insert(savedInstances, obj)
-                obj.Parent = nil
-            end
-        end
-
-        -- Убираем облака
-        if Terrain then
-            local clouds = Terrain:FindFirstChildOfClass("Clouds")
-            if clouds then
-                table.insert(savedInstances, clouds)
-                clouds.Parent = nil
-            end
-        end
-
-        -- Полностью белое небо
-        Lighting.ClockTime = 14
-        Lighting.Brightness = 10
-        Lighting.GlobalShadows = false
-        Lighting.FogStart = 100000
-        Lighting.FogEnd = 100001
-        Lighting.Ambient = Color3.new(1,1,1)
-        Lighting.OutdoorAmbient = Color3.new(1,1,1)
-
-        local sky = Instance.new("Sky")
-        sky.SkyboxBk = "rbxassetid://1"
-        sky.SkyboxDn = "rbxassetid://1"
-        sky.SkyboxFt = "rbxassetid://1"
-        sky.SkyboxLf = "rbxassetid://1"
-        sky.SkyboxRt = "rbxassetid://1"
-        sky.SkyboxUp = "rbxassetid://1"
-        sky.Name = "__WhiteSky"
-        sky.Parent = Lighting
-
-    elseif not state and enabled then
-        enabled = false
-
-        local whiteSky = Lighting:FindFirstChild("__WhiteSky")
-        if whiteSky then
-            whiteSky:Destroy()
-        end
-
-        for _, obj in ipairs(savedInstances) do
-            if obj:IsA("Clouds") then
-                obj.Parent = Terrain
-            else
-                obj.Parent = Lighting
-            end
-        end
-
-        table.clear(savedInstances)
-    end
-
-end)
-
-
-
-
-
 
 
 
@@ -1060,6 +981,38 @@ end)
 
 
 
+local hiddenGrass = {}
+
+fpstab:Toggle("Hide Grass", false, function(enabled)
+    if enabled then
+        hiddenGrass = {}
+
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("BasePart") then
+                local c = v.Color
+
+                if c.G > c.R and c.G > c.B and v.Size.Y <= 2 then
+                    hiddenGrass[v] = {
+                        Transparency = v.Transparency,
+                        CanCollide = v.CanCollide
+                    }
+
+                    v.Transparency = 1
+                    v.CanCollide = false
+                end
+            end
+        end
+    else
+        for part, data in pairs(hiddenGrass) do
+            if part and part.Parent then
+                part.Transparency = data.Transparency
+                part.CanCollide = data.CanCollide
+            end
+        end
+
+        hiddenGrass = {}
+    end
+end)
 
 
 
@@ -1067,6 +1020,105 @@ end)
 
 
 
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+_G.color2 = Color3.new(1,1,1)
+
+local fireEnabled = false
+
+local function removeFire()
+	local character = player.Character
+	if not character then return end
+
+	local root = character:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
+	local aura = root:FindFirstChild("FireAura")
+	if aura then
+		aura:Destroy()
+	end
+
+	_G.FireEmitter = nil
+	_G.FireLight = nil
+end
+
+local function createFire()
+	removeFire()
+
+	local character = player.Character
+	if not character then return end
+
+	local root = character:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
+	local attachment = Instance.new("Attachment")
+	attachment.Name = "FireAura"
+	attachment.Parent = root
+
+	local fire = Instance.new("ParticleEmitter")
+	_G.FireEmitter = fire
+
+	fire.Parent = attachment
+	fire.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+	fire.Color = ColorSequence.new(_G.color2)
+
+	fire.LightEmission = 1
+	fire.LightInfluence = 0
+	fire.Size = NumberSequence.new(1.5,0)
+	fire.Transparency = NumberSequence.new(0.1,1)
+	fire.Lifetime = NumberRange.new(0.5,1)
+	fire.Rate = 120
+	fire.Speed = NumberRange.new(0.5,2)
+	fire.SpreadAngle = Vector2.new(360,360)
+	fire.Rotation = NumberRange.new(0,360)
+	fire.RotSpeed = NumberRange.new(-180,180)
+	fire.Acceleration = Vector3.new(0,2,0)
+	fire.Drag = 2
+
+	-- Свет теперь внутри Attachment
+	local light = Instance.new("PointLight")
+	_G.FireLight = light
+
+	light.Parent = attachment
+	light.Color = _G.color2
+	light.Range = 12
+	light.Brightness = 2
+end
+
+-- Toggle
+visualtab:Toggle("Fire Aura", false, function(state)
+	fireEnabled = state
+
+	if state then
+		createFire()
+	else
+		removeFire()
+	end
+end)
+
+-- ColorPicker
+visualtab:Colorpicker("Fire Color", Color3.new(1,1,1), function(value)
+	_G.color2 = value
+
+	if _G.FireEmitter then
+		_G.FireEmitter.Color = ColorSequence.new(value)a
+	end
+
+	if _G.FireLight then
+		_G.FireLight.Color = value
+	end
+end)
+
+player.CharacterAdded:Connect(function()
+	task.wait(1)
+
+	if fireEnabled then
+		createFire()
+	end
+end)
 
 
 
