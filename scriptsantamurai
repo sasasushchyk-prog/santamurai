@@ -1,28 +1,148 @@
-_G.list = {
-    ["kipr987"] = {m = 10,d=15,h=0},
-	 ["sas_prox123"] = {m = 12,d=15,h=0},
-	 ["hehehuebwu"] = {m = 9,d=25,h=0},
-	 ["hfgykjg"] = {m = 9,d=25,h=0},
-	 ["TGK_Borick"] = {m = 1,d=25,h=0},
-	 ["Sasha_skibidysigma"] = {m = 9,d=25,h=0},
-	 ["hahahajobd"] = {m = 9,d=25,h=0},
-	 ["sviat68687"] = {m = 9,d=25,h=0},
-	 ["tim1200347"] = {m = 9,d=25,h=0},
-	 ["rXjeqTDkoaa"] = {m = 9,d=25,h=0},
-	 ["III0THuK"] = {m = 1,d=25,h=0},
-	 ["huydydv"] = {m = 9,d=25,h=0},
-	 ["sjcsfcsfc"] = {m = 9,d=25,h=0},
-}
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
 
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
 
-for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
+local gui = Instance.new("ScreenGui")
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.Parent = PlayerGui
+
+-- Фон
+local background = Instance.new("Frame")
+background.Size = UDim2.fromScale(1, 1)
+background.BackgroundColor3 = Color3.new(0, 0, 0)
+background.BackgroundTransparency = 1
+background.Parent = gui
+
+-- Фото
+local image = Instance.new("ImageLabel")
+image.AnchorPoint = Vector2.new(0.5, 0.5)
+image.Position = UDim2.fromScale(0.5, 0.45)
+image.Size = UDim2.fromOffset(500, 500)
+image.BackgroundTransparency = 1
+image.Image = "rbxassetid://99111619026666"
+image.Parent = background
+
+-- Масштаб картинки
+local imageScale = Instance.new("UIScale")
+imageScale.Scale = 0
+imageScale.Parent = image
+
+-- Надпись
+local text = Instance.new("TextLabel")
+text.AnchorPoint = Vector2.new(0.5, 0)
+text.Position = UDim2.fromScale(0.5, 0.72)
+text.Size = UDim2.fromOffset(500, 60)
+text.BackgroundTransparency = 1
+text.Text = "Sky Visuals"
+text.TextColor3 = Color3.new(1, 1, 1)
+text.Font = Enum.Font.GothamBold
+text.TextScaled = true
+text.Parent = background
+
+-- Масштаб текста
+local textScale = Instance.new("UIScale")
+textScale.Scale = 0
+textScale.Parent = text
+
+----------------------------------------------------
+
+-- Появление затемнения
+TweenService:Create(
+	background,
+	TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+	{
+		BackgroundTransparency = 0.2
+	}
+):Play()
+
+-- Появление картинки
+TweenService:Create(
+	imageScale,
+	TweenInfo.new(
+		0.8,
+		Enum.EasingStyle.Back,
+		Enum.EasingDirection.Out
+	),
+	{Scale = 1}
+):Play()
+
+-- Появление текста
+TweenService:Create(
+	textScale,
+	TweenInfo.new(
+		0.8,
+		Enum.EasingStyle.Back,
+		Enum.EasingDirection.Out
+	),
+	{Scale = 1}
+):Play()
+
+task.wait(3)
+
+-- Исчезновение картинки
+TweenService:Create(
+	imageScale,
+	TweenInfo.new(
+		0.8,
+		Enum.EasingStyle.Back,
+		Enum.EasingDirection.In
+	),
+	{Scale = 0}
+):Play()
+
+-- Исчезновение текста
+TweenService:Create(
+	textScale,
+	TweenInfo.new(
+		0.8,
+		Enum.EasingStyle.Back,
+		Enum.EasingDirection.In
+	),
+	{Scale = 0}
+):Play()
+
+-- Исчезновение фона
+TweenService:Create(
+	background,
+	TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+	{
+		BackgroundTransparency = 1
+	}
+):Play()
+
+task.wait(0.85)
+
+gui:Destroy()
+
+-- Запуск Password GUI
+for _, v in ipairs(game:GetService("CoreGui"):GetChildren()) do
     if v.Name == "ui" then
         v:Destroy()
     end
 end
+
 loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
 
+local gui = _G.lib:Window("Password")
+local pass = gui:Tab("Password")
 
+pass:Textbox("Enter", "", function(value)
+    if value == "santamurai" or value == "1" then
+
+        for _, v in ipairs(game:GetService("CoreGui"):GetChildren()) do
+            if v.Name == "ui" then
+                v:Destroy()
+            end
+        end
+	end
+end)
+
+        loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
+
+        -- ↓↓↓ ВСТАВЬ СЮДА ОСТАЛЬНОЙ КОД СВОЕГО Sky Visuals ↓↓↓
 local gui = _G.lib:Window("Password")
 
 local pass = gui:Tab("Password")
