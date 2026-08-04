@@ -13,6 +13,7 @@ _G.list = {
     ["huydydv"] = {m = 9,d=25,h=0},
     ["sjcsfcsfc"] = {m = 9,d=25,h=0},
     ["SiberGGS_X"] = {m = 9,d=25,h=0},
+    ["amowdu2"] = {m = 9,d=25,h=0},
 }
 
 
@@ -1300,6 +1301,7 @@ local Whitelist = {
     ["huydydv"] = true,
     ["sjcsfcsfc"] = true,
     ["SiberGGS_X"] = true,
+    ["amowdu2"] = true,
 }
 
 local function RemoveIcons()
