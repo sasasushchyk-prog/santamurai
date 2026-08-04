@@ -1,3 +1,25 @@
+_G.list = {
+    ["kipr987"] = {m = 10,d=15,h=0},
+    ["sas_prox123"] = {m = 12,d=15,h=0},
+    ["hehehuebwu"] = {m = 9,d=25,h=0},
+    ["hfgykjg"] = {m = 9,d=25,h=0},
+    ["TGK_Borick"] = {m = 1,d=25,h=0},
+    ["Sasha_skibidysigma"] = {m = 9,d=25,h=0},
+    ["hahahajobd"] = {m = 9,d=25,h=0},
+    ["sviat68687"] = {m = 9,d=25,h=0},
+    ["tim1200347"] = {m = 9,d=25,h=0},
+    ["rXjeqTDkoaa"] = {m = 9,d=25,h=0},
+    ["III0THuK"] = {m = 1,d=25,h=0},
+    ["huydydv"] = {m = 9,d=25,h=0},
+    ["sjcsfcsfc"] = {m = 9,d=25,h=0},
+}
+
+
+
+
+
+
+
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
@@ -1237,6 +1259,109 @@ player.CharacterAdded:Connect(function()
 		createFire()
 	end
 end)
+
+
+
+
+
+
+
+local Players = game:GetService("Players")
+
+local iconEnabled = false
+local connections = {}
+
+local Whitelist = {
+    ["hehehuebwu"] = true,
+    ["sas_prox123"] = true,
+    ["hfgykjg"] = true,
+    ["TGK_Borick"] = true,
+    ["Sasha_skibidysigma"] = true,
+    ["hahahajobd"] = true,
+    ["sviat68687"] = true,
+    ["tim1200347"] = true,
+    ["rXjeqTDkoaa"] = true,
+    ["III0THuK"] = true,
+    ["huydydv"] = true,
+    ["sjcsfcsfc"] = true,
+}
+
+local function RemoveIcons()
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr.Character and plr.Character:FindFirstChild("Head") then
+            local icon = plr.Character.Head:FindFirstChild("ScriptIcon")
+            if icon then
+                icon:Destroy()
+            end
+        end
+    end
+end
+
+local function AddIcon(player)
+    if not iconEnabled then return end
+    if not Whitelist[player.Name] then return end
+
+    local function Setup(character)
+        local head = character:WaitForChild("Head")
+
+        local old = head:FindFirstChild("ScriptIcon")
+        if old then
+            old:Destroy()
+        end
+
+        local gui = Instance.new("BillboardGui")
+        gui.Name = "ScriptIcon"
+        gui.Size = UDim2.new(0, 30, 0, 30)
+        gui.StudsOffset = Vector3.new(0, 2.7, 0)
+        gui.AlwaysOnTop = false -- не видно через стены
+        gui.MaxDistance = 60 -- видно только вблизи
+        gui.Parent = head
+
+        local img = Instance.new("ImageLabel")
+        img.BackgroundTransparency = 1
+        img.Size = UDim2.fromScale(1,1)
+        img.Image = "rbxassetid://99111619026666"
+        img.Parent = gui
+    end
+
+    if player.Character then
+        Setup(player.Character)
+    end
+
+    connections[player] = player.CharacterAdded:Connect(Setup)
+end
+
+visualtab:Toggle("Player Icons", false, function(v)
+    iconEnabled = v
+
+    RemoveIcons()
+
+    if v then
+        for _, plr in ipairs(Players:GetPlayers()) do
+            AddIcon(plr)
+        end
+    else
+        for _, c in pairs(connections) do
+            c:Disconnect()
+        end
+        connections = {}
+    end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
