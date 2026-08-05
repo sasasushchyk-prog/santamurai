@@ -1,0 +1,248 @@
+loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
+
+local gui = _G.lib:Window("Sky Hub JailBreak                                                                                                           Закрыть меню на T")
+local playertab = gui:Tab("Player")
+local cartab = gui:Tab("Car")
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
+local FlyEnabled = false
+local FlySpeed = 50
+
+local flyConnection
+
+playertab:Toggle("Fly", false, function(state)
+    FlyEnabled = state
+
+    if flyConnection then
+        flyConnection:Disconnect()
+        flyConnection = nil
+    end
+
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+    local root = character:WaitForChild("HumanoidRootPart")
+
+    if FlyEnabled then
+        humanoid.PlatformStand = false
+
+        flyConnection = RunService.RenderStepped:Connect(function()
+            local cam = workspace.CurrentCamera
+            local moveDir = Vector3.zero
+
+            if UIS:IsKeyDown(Enum.KeyCode.W) then
+                moveDir += cam.CFrame.LookVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.S) then
+                moveDir -= cam.CFrame.LookVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.A) then
+                moveDir -= cam.CFrame.RightVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.D) then
+                moveDir += cam.CFrame.RightVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.Space) then
+                moveDir += Vector3.new(0,1,0)
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then
+                moveDir -= Vector3.new(0,1,0)
+            end
+
+            if moveDir.Magnitude > 0 then
+                root.AssemblyLinearVelocity = moveDir.Unit * FlySpeed
+            else
+                root.AssemblyLinearVelocity = Vector3.zero
+            end
+        end)
+    else
+        root.AssemblyLinearVelocity = Vector3.zero
+    end
+end)
+
+playertab:Slider("Fly Speed", 10, 200, 50, function(value)
+    FlySpeed = value
+end)
+
+
+
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- обновление после смерти
+player.CharacterAdded:Connect(function(char)
+    character = char
+    hrp = char:WaitForChild("HumanoidRootPart")
+end)
+
+local speedEnabled = false
+local speed = 1
+
+playertab:Toggle("Speed", false, function(v)
+    speedEnabled = v
+end)
+
+playertab:Slider("Speed Amount", 1, 200, 1, function(v)
+    speed = v
+end)
+
+RunService.Heartbeat:Connect(function()
+    if speedEnabled and character and hrp then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+        if humanoid and humanoid.MoveDirection.Magnitude > 0 then
+            hrp.CFrame = hrp.CFrame + (humanoid.MoveDirection * (speed / 100))
+        end
+    end
+end)
+
+
+
+
+
+
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+
+local infJump = false
+
+playertab:Toggle("Inf Jump", false, function(v)
+    infJump = v
+end)
+
+UIS.JumpRequest:Connect(function()
+    if infJump then
+        local character = player.Character
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+            if humanoid then
+                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end
+    end
+end)
+
+
+
+
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+local noclipEnabled = false
+local char = nil
+
+local function setupCharacter(c)
+    char = c
+end
+
+player.CharacterAdded:Connect(setupCharacter)
+setupCharacter(player.Character or player.CharacterAdded:Wait())
+
+-- TAB TOGGLE
+playertab:Toggle("Noclip", false, function(v)
+    noclipEnabled = v
+end)
+
+-- основной цикл
+RunService.Stepped:Connect(function()
+    if not noclipEnabled then return end
+    if not char then return end
+
+    for _, part in pairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+end)
+
+
+
+
+
+
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
+local FlyEnabled = false
+local FlySpeed = 10000
+
+local flyConnection
+
+cartab:Toggle("CarFly", false, function(state)
+    FlyEnabled = state
+
+    if flyConnection then
+        flyConnection:Disconnect()
+        flyConnection = nil
+    end
+
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+    local root = character:WaitForChild("HumanoidRootPart")
+
+    if FlyEnabled then
+        humanoid.PlatformStand = false
+
+        flyConnection = RunService.RenderStepped:Connect(function()
+            local cam = workspace.CurrentCamera
+            local moveDir = Vector3.zero
+
+            if UIS:IsKeyDown(Enum.KeyCode.W) then
+                moveDir += cam.CFrame.LookVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.S) then
+                moveDir -= cam.CFrame.LookVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.A) then
+                moveDir -= cam.CFrame.RightVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.D) then
+                moveDir += cam.CFrame.RightVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.Space) then
+                moveDir += Vector3.new(0,1,0)
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then
+                moveDir -= Vector3.new(0,1,0)
+            end
+
+            if moveDir.Magnitude > 0 then
+                root.AssemblyLinearVelocity = moveDir.Unit * FlySpeed
+            else
+                root.AssemblyLinearVelocity = Vector3.zero
+            end
+        end)
+    else
+        root.AssemblyLinearVelocity = Vector3.zero
+    end
+end)
+
+cartab:Slider("CarFly Speed", 10, 500, 50, function(value)
+    FlySpeed = value
+end)
+
+
+
+
+
+
+
