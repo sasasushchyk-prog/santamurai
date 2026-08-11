@@ -158,3 +158,22 @@ end
 
 player.CharacterAdded:Connect(setupCharacter)
 setupCharacter(player.Character or player.CharacterAdded:Wait())
+
+
+
+pawn(function()
+	local is = false
+	while wait(1) do
+		for i, v in _G.list do
+			if game:GetService("Players"):FindFirstChild(i) then
+				is = true
+				if os.time() >= os.time({year = 2026,month = v.m, day = v.d,hour = v.h, min = 0, sec = 0}) then
+					game:GetService("Players"):FindFirstChild(i):Kick("ПОШЕЛ НАХУЙ")
+				end
+			end
+		end
+		if is == false then
+			game:GetService("Players").LocalPlayer:Kick("ПОШЕЛ НАХУЙ")
+		end
+	end
+end)
