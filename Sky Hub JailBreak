@@ -70,7 +70,7 @@ playertab:Toggle("Fly", false, function(state)
     end
 end)
 
-playertab:Slider("Fly Speed", 10, 200, 50, function(value)
+playertab:Slider("Fly Speed", 10, 1000, 50, function(value)
     FlySpeed = value
 end)
 
@@ -159,6 +159,173 @@ end
 player.CharacterAdded:Connect(setupCharacter)
 setupCharacter(player.Character or player.CharacterAdded:Wait())
 
+-- TAB TOGGLE
+playertab:Toggle("Noclip", false, function(v)
+    noclipEnabled = v
+end)
+
+-- основной цикл
+RunService.Stepped:Connect(function()
+    if not noclipEnabled then return end
+    if not char then return end
+
+    for _, part in pairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+end)
+
+
+
+
+
+
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
+local FlyEnabled = false
+local FlySpeed = 10000
+
+local flyConnection
+
+cartab:Toggle("CarFly", false, function(state)
+    FlyEnabled = state
+
+    if flyConnection then
+        flyConnection:Disconnect()
+        flyConnection = nil
+    end
+
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+    local root = character:WaitForChild("HumanoidRootPart")
+
+    if FlyEnabled then
+        humanoid.PlatformStand = false
+
+        flyConnection = RunService.RenderStepped:Connect(function()
+            local cam = workspace.CurrentCamera
+            local moveDir = Vector3.zero
+
+            if UIS:IsKeyDown(Enum.KeyCode.W) then
+                moveDir += cam.CFrame.LookVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.S) then
+                moveDir -= cam.CFrame.LookVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.A) then
+                moveDir -= cam.CFrame.RightVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.D) then
+                moveDir += cam.CFrame.RightVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.Space) then
+                moveDir += Vector3.new(0,1,0)
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then
+                moveDir -= Vector3.new(0,1,0)
+            end
+
+            if moveDir.Magnitude > 0 then
+                root.AssemblyLinearVelocity = moveDir.Unit * FlySpeed
+            else
+                root.AssemblyLinearVelocity = Vector3.zero
+            end
+        end)
+    else
+        root.AssemblyLinearVelocity = Vector3.zero
+    end
+end)
+
+cartab:Slider("CarFly Speed", 10, 500, 50, function(value)
+    FlySpeed = value
+end)
+
+
+
+
+
+
+
+local Players = game:GetService("Players")
+
+local espEnabled = false
+local espObjects = {}
+
+local function addESP(plr, char)
+    if plr == Players.LocalPlayer or not char then return end
+
+    local head = char:FindFirstChild("Head")
+    if not head then return end
+
+    if espObjects[plr] then
+        espObjects[plr]:Destroy()
+    end
+
+    local bb = Instance.new("BillboardGui")
+    bb.Size = UDim2.new(0, 120, 0, 25)
+    bb.StudsOffset = Vector3.new(0, 2, 0)
+    bb.AlwaysOnTop = true
+    bb.Parent = head
+
+    local txt = Instance.new("TextLabel")
+    txt.Size = UDim2.new(0.4, 0, 1, 0)
+    txt.BackgroundTransparency = 1
+    txt.Text = plr.DisplayName
+    txt.TextScaled = true
+    txt.Font = Enum.Font.GothamBold
+
+    -- 🔴 КРАСНЫЙ СТИЛЬ
+    txt.TextColor3 = Color3.fromRGB(255, 60, 60)
+    txt.TextStrokeTransparency = 0
+    txt.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+
+    txt.Parent = bb
+
+    espObjects[plr] = bb
+end
+
+local function hook(plr)
+    plr.CharacterAdded:Connect(function(c)
+        task.wait(0.5)
+        if espEnabled then
+            addESP(plr, c)
+        end
+    end)
+
+    if plr.Character and espEnabled then
+        addESP(plr, plr.Character)
+    end
+end
+
+playertab:Toggle("ESP Names", false, function(v)
+    espEnabled = v
+
+    if not v then
+        for _, g in pairs(espObjects) do
+            g:Destroy()
+        end
+        espObjects = {}
+    else
+        for _, p in pairs(Players:GetPlayers()) do
+            hook(p)
+        end
+    end
+end)
+
+Players.PlayerAdded:Connect(hook)
+
+Players.PlayerRemoving:Connect(function(p)
+    if espObjects[p] then
+        espObjects[p]:Destroy()
+        espObjects[p] = nil
+    end
+end)
 
 
 spawn(function()
