@@ -161,7 +161,7 @@ setupCharacter(player.Character or player.CharacterAdded:Wait())
 
 
 
-pawn(function()
+spawn(function()
 	local is = false
 	while wait(1) do
 		for i, v in _G.list do
