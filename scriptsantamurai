@@ -1302,6 +1302,7 @@ local Whitelist = {
     ["sjcsfcsfc"] = true,
     ["SiberGGS_X"] = true,
     ["amowdu2"] = true,
+	["axmed_811811"] = true,
 }
 
 local function RemoveIcons()
