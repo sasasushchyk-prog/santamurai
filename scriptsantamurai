@@ -1,1 +1,1421 @@
-.
+_G.list = {
+    ["kipr987"] = {m = 10,d=15,h=0},
+    ["sas_pro123"] = {m = 12,d=15,h=0},
+    ["hehehuebwu"] = {m = 9,d=25,h=0},
+    ["hfgykjg"] = {m = 9,d=25,h=0},
+    ["TGK_Borick"] = {m = 1,d=25,h=0},
+    ["Sasha_skibidysigma"] = {m = 9,d=25,h=0},
+    ["hahahajobd"] = {m = 9,d=25,h=0},
+    ["sviat68687"] = {m = 9,d=25,h=0},
+    ["tim1200347"] = {m = 9,d=25,h=0},
+    ["rXjeqTDkoaa"] = {m = 9,d=25,h=0},
+    ["III0THuK"] = {m = 1,d=25,h=0},
+    ["huydydv"] = {m = 9,d=25,h=0},
+    ["sjcsfcsfc"] = {m = 9,d=25,h=0},
+    ["SiberGGS_X"] = {m = 9,d=25,h=0},
+    ["amowdu2"] = {m = 9,d=25,h=0},
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
+
+local gui = Instance.new("ScreenGui")
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.Parent = PlayerGui
+
+-- Фон
+local background = Instance.new("Frame")
+background.Size = UDim2.fromScale(1, 1)
+background.BackgroundColor3 = Color3.new(0, 0, 0)
+background.BackgroundTransparency = 1
+background.Parent = gui
+
+-- Фото
+local image = Instance.new("ImageLabel")
+image.AnchorPoint = Vector2.new(0.5, 0.5)
+image.Position = UDim2.fromScale(0.5, 0.45)
+image.Size = UDim2.fromOffset(500, 500)
+image.BackgroundTransparency = 1
+image.Image = "rbxassetid://99111619026666"
+image.Parent = background
+
+-- Масштаб картинки
+local imageScale = Instance.new("UIScale")
+imageScale.Scale = 0
+imageScale.Parent = image
+
+-- Надпись
+local text = Instance.new("TextLabel")
+text.AnchorPoint = Vector2.new(0.5, 0)
+text.Position = UDim2.fromScale(0.5, 0.72)
+text.Size = UDim2.fromOffset(500, 60)
+text.BackgroundTransparency = 1
+text.Text = "Sky Visuals"
+text.TextColor3 = Color3.new(1, 1, 1)
+text.Font = Enum.Font.GothamBold
+text.TextScaled = true
+text.Parent = background
+
+-- Масштаб текста
+local textScale = Instance.new("UIScale")
+textScale.Scale = 0
+textScale.Parent = text
+
+----------------------------------------------------
+
+-- Появление затемнения
+TweenService:Create(
+	background,
+	TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+	{
+		BackgroundTransparency = 0.2
+	}
+):Play()
+
+-- Появление картинки
+TweenService:Create(
+	imageScale,
+	TweenInfo.new(
+		0.8,
+		Enum.EasingStyle.Back,
+		Enum.EasingDirection.Out
+	),
+	{Scale = 1}
+):Play()
+
+-- Появление текста
+TweenService:Create(
+	textScale,
+	TweenInfo.new(
+		0.8,
+		Enum.EasingStyle.Back,
+		Enum.EasingDirection.Out
+	),
+	{Scale = 1}
+):Play()
+
+task.wait(3)
+
+-- Исчезновение картинки
+TweenService:Create(
+	imageScale,
+	TweenInfo.new(
+		0.8,
+		Enum.EasingStyle.Back,
+		Enum.EasingDirection.In
+	),
+	{Scale = 0}
+):Play()
+
+-- Исчезновение текста
+TweenService:Create(
+	textScale,
+	TweenInfo.new(
+		0.8,
+		Enum.EasingStyle.Back,
+		Enum.EasingDirection.In
+	),
+	{Scale = 0}
+):Play()
+
+-- Исчезновение фона
+TweenService:Create(
+	background,
+	TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+	{
+		BackgroundTransparency = 1
+	}
+):Play()
+
+task.wait(0.85)
+
+gui:Destroy()
+
+-- Запуск Password GUI
+for _, v in ipairs(game:GetService("CoreGui"):GetChildren()) do
+    if v.Name == "ui" then
+        v:Destroy()
+    end
+end
+
+loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
+
+local gui = _G.lib:Window("Password")
+local pass = gui:Tab("Password")
+
+pass:Textbox("Enter", "", function(value)
+    if value == "santamurai" or value == "1" then
+
+        for _, v in ipairs(game:GetService("CoreGui"):GetChildren()) do
+            if v.Name == "ui" then
+                v:Destroy()
+            end
+        end
+	end
+end)
+
+        loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
+
+        -- ↓↓↓ ВСТАВЬ СЮДА ОСТАЛЬНОЙ КОД СВОЕГО Sky Visuals ↓↓↓
+local gui = _G.lib:Window("Password                                                                                                                         Закрыть меню на T")
+
+local pass = gui:Tab("Password")
+
+pass:Textbox("Enter","",function(value)
+        if value == "santamurai" or value == "1" then
+        for i, v in pairs(game:GetService("CoreGui"):GetChildren()) do
+    if v.Name == "ui" then
+        v:Destroy()
+    end
+end
+
+
+
+
+
+
+
+loadstring(game:HttpGet("https://pastebin.com/raw/tuaafYvJ", true))()
+local gui = _G.lib:Window("Sky Visuals                                                                                                                         Закрыть меню на T")
+
+local visualtab = gui:Tab("Visual")
+
+local soundtab = gui:Tab("Music")
+
+local crosshairtab = gui:Tab("Crosshair")
+
+local skintab = gui:Tab("Skin")
+
+local fpstab = gui:Tab("FPS")
+
+
+
+
+
+
+local exittab = gui:Tab("Exit")
+exittab:Button("Close Script", function()
+    game:GetService("Players").LocalPlayer:Kick("Close  " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name .. "")
+end)
+
+
+
+local Lighting = game:GetService("Lighting")
+
+local timeEnabled = false
+local currentTime = 12
+local originalTime = Lighting.ClockTime
+
+visualtab:Toggle("Time Changer", false, function(value)
+    timeEnabled = value
+
+    if timeEnabled then
+        originalTime = Lighting.ClockTime
+        Lighting.ClockTime = currentTime
+    else
+        Lighting.ClockTime = originalTime
+    end
+end)
+
+visualtab:Slider("Time", 1, 24, 12, function(value)
+    currentTime = value
+
+    if timeEnabled then
+        Lighting.ClockTime = value
+    end
+end)
+
+
+
+local originalMaterials = {}
+
+fpstab:Toggle("Plastic Materials", false, function(value)
+
+    if value then
+
+        -- Сохраняем оригинальные материалы и меняем на Plastic
+        for _, object in ipairs(workspace:GetDescendants()) do
+            if object:IsA("BasePart") then
+
+                if originalMaterials[object] == nil then
+                    originalMaterials[object] = object.Material
+                end
+
+                object.Material = Enum.Material.Plastic
+            end
+        end
+
+    else
+
+        -- Возвращаем оригинальные материалы
+        for object, material in pairs(originalMaterials) do
+            if object and object.Parent then
+                object.Material = material
+            end
+        end
+
+        -- Очищаем сохранённые материалы
+        originalMaterials = {}
+    end
+
+end)
+
+
+
+local originalShadows = {}
+
+fpstab:Toggle("Remove Shadows", false, function(value)
+
+    if value then
+
+        -- Сохраняем оригинальное состояние теней
+        for _, object in ipairs(workspace:GetDescendants()) do
+            if object:IsA("BasePart") then
+
+                if originalShadows[object] == nil then
+                    originalShadows[object] = object.CastShadow
+                end
+
+                object.CastShadow = false
+            end
+        end
+
+    else
+
+        -- Возвращаем оригинальные настройки теней
+        for object, castShadow in pairs(originalShadows) do
+            if object and object.Parent then
+                object.CastShadow = castShadow
+            end
+        end
+
+        originalShadows = {}
+    end
+
+end)
+
+
+local originalLightingEffects = {}
+
+fpstab:Toggle("Remove Light Effects", false, function(value)
+
+    if value then
+
+        -- Сохраняем состояние всех эффектов
+        for _, object in ipairs(game:GetDescendants()) do
+
+            if object:IsA("PointLight")
+            or object:IsA("SpotLight")
+            or object:IsA("SurfaceLight")
+            or object:IsA("BloomEffect")
+            or object:IsA("BlurEffect")
+            or object:IsA("ColorCorrectionEffect")
+            or object:IsA("SunRaysEffect")
+            or object:IsA("DepthOfFieldEffect") then
+
+                if originalLightingEffects[object] == nil then
+                    originalLightingEffects[object] = object.Enabled
+                end
+
+                object.Enabled = false
+            end
+
+        end
+
+    else
+
+        -- Возвращаем эффекты обратно
+        for object, enabled in pairs(originalLightingEffects) do
+            if object and object.Parent then
+                object.Enabled = enabled
+            end
+        end
+
+        originalLightingEffects = {}
+
+    end
+
+end)
+
+
+
+local Terrain = workspace.Terrain
+
+local originalWaterColor = Terrain.WaterColor
+local originalWaterTransparency = Terrain.WaterTransparency
+local originalWaterReflectance = Terrain.WaterReflectance
+local originalWaterWaveSize = Terrain.WaterWaveSize
+local originalWaterWaveSpeed = Terrain.WaterWaveSpeed
+
+fpstab:Toggle("Simple Blue Water", false, function(value)
+
+    if value then
+
+        -- Простая синяя вода
+        Terrain.WaterColor = Color3.fromRGB(0, 120, 255)
+        Terrain.WaterTransparency = 0.25
+        Terrain.WaterReflectance = 0
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+
+    else
+
+        -- Возвращаем оригинальную воду
+        Terrain.WaterColor = originalWaterColor
+        Terrain.WaterTransparency = originalWaterTransparency
+        Terrain.WaterReflectance = originalWaterReflectance
+        Terrain.WaterWaveSize = originalWaterWaveSize
+        Terrain.WaterWaveSpeed = originalWaterWaveSpeed
+
+    end
+
+end)
+
+
+
+
+
+
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local fakeHeadless = false
+
+-- функция применения headless
+local function applyHeadless(character)
+    local head = character:FindFirstChild("Head")
+
+    if head then
+        -- скрываем голову
+        head.Transparency = 1
+
+        -- скрываем лицо
+        local face = head:FindFirstChildOfClass("Decal")
+        if face then
+            face.Transparency = 1
+        end
+
+        -- скрываем аксессуары головы
+        for _, v in pairs(character:GetChildren()) do
+            if v:IsA("Accessory") then
+                local handle = v:FindFirstChild("Handle")
+
+                if handle and v.AccessoryType == Enum.AccessoryType.Hat then
+                    handle.Transparency = 1
+                end
+            end
+        end
+    end
+end
+
+-- функция отключения
+local function removeHeadless(character)
+    local head = character:FindFirstChild("Head")
+
+    if head then
+        head.Transparency = 0
+
+        local face = head:FindFirstChildOfClass("Decal")
+        if face then
+            face.Transparency = 0
+        end
+
+        for _, v in pairs(character:GetChildren()) do
+            if v:IsA("Accessory") then
+                local handle = v:FindFirstChild("Handle")
+
+                if handle and v.AccessoryType == Enum.AccessoryType.Hat then
+                    handle.Transparency = 0
+                end
+            end
+        end
+    end
+end
+
+-- после смерти снова применять
+player.CharacterAdded:Connect(function(character)
+    if fakeHeadless then
+        character:WaitForChild("Head")
+
+        task.wait(1)
+
+        applyHeadless(character)
+    end
+end)
+
+skintab:Toggle("Fake Headless", false, function(v)
+    fakeHeadless = v
+
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    if v then
+        applyHeadless(character)
+    else
+        removeHeadless(character)
+    end
+end)
+
+
+
+
+
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local korbloxEnabled = false
+
+-- функция применения korblox
+local function applyKorblox(character)
+    local upper = character:FindFirstChild("RightUpperLeg")
+    local lower = character:FindFirstChild("RightLowerLeg")
+    local foot = character:FindFirstChild("RightFoot")
+
+    -- удаляем части ноги
+    if upper then
+        upper:Destroy()
+    end
+
+    if lower then
+        lower:Destroy()
+    end
+
+    -- уменьшаем стопу
+    if foot then
+        foot.Size = Vector3.new(1,0.5,1)
+
+        local mesh = foot:FindFirstChildOfClass("SpecialMesh")
+        if mesh then
+            mesh.Scale = Vector3.new(0.5,0.5,0.5)
+        end
+    end
+end
+
+-- после смерти снова применять
+player.CharacterAdded:Connect(function(character)
+    if korbloxEnabled then
+        character:WaitForChild("Humanoid")
+
+        task.wait(1)
+
+        applyKorblox(character)
+    end
+end)
+
+skintab:Toggle("Fake Korblox", false, function(v)
+    korbloxEnabled = v
+
+    if v then
+        local character = player.Character or player.CharacterAdded:Wait()
+        applyKorblox(character)
+    else
+        player:LoadCharacter()
+    end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local trailEnabled = false
+local selectedColor = "White"
+
+
+
+--// УДАЛЕНИЕ TRAIL
+
+local function removeTrail()
+    local character = player.Character
+    if not character then return end
+
+    for _, v in pairs(character:GetDescendants()) do
+        if v.Name == "ColorTrail"
+        or v.Name == "ColorTrailAttachment0"
+        or v.Name == "ColorTrailAttachment1" then
+            v:Destroy()
+        end
+    end
+end
+
+
+--// СОЗДАНИЕ TRAIL
+
+local function createTrail()
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    removeTrail()
+
+    local root = character:WaitForChild("HumanoidRootPart")
+
+    local attachment0 = Instance.new("Attachment")
+    attachment0.Name = "ColorTrailAttachment0"
+    attachment0.Position = Vector3.new(0, -1.2, 0)
+    attachment0.Parent = root
+
+    local attachment1 = Instance.new("Attachment")
+    attachment1.Name = "ColorTrailAttachment1"
+    attachment1.Position = Vector3.new(0, 1.2, 0)
+    attachment1.Parent = root
+
+    local trail = Instance.new("Trail")
+    trail.Name = "ColorTrail"
+
+    trail.Attachment0 = attachment0
+    trail.Attachment1 = attachment1
+	spawn(function()
+		while wait() and trail do
+			pcall(function()
+				trail.Color = ColorSequence.new(_G.color2)
+			end)
+		end
+	end)
+    trail.Lifetime = 2
+    trail.MinLength = 0
+    trail.LightEmission = 1
+    trail.FaceCamera = true
+    trail.Enabled = true
+
+    trail.WidthScale = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.45),
+        NumberSequenceKeypoint.new(1, 0)
+    })
+
+    trail.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.25),
+        NumberSequenceKeypoint.new(1, 1)
+    })
+
+    trail.Parent = root
+end
+
+
+--// ВЫБОР ЦВЕТА
+
+
+
+
+--// TOGGLE TRAIL
+
+visualtab:Toggle("Trail", false, function(value)
+
+    trailEnabled = value
+
+    if value then
+        createTrail()
+    else
+        removeTrail()
+    end
+
+end)
+
+		_G.color2 = Color3.new(1,1,1)
+
+		visualtab:Colorpicker("Color",Color3.new(1,1,1),function(value)
+			_G.color2 = value
+		end)
+
+
+--// РЕСПАВН
+
+player.CharacterAdded:Connect(function()
+
+    task.wait(1)
+
+    if trailEnabled then
+        createTrail()
+    end
+
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local RunService = game:GetService("RunService")
+
+local lastStepPosition = nil
+local stepConnection
+
+local function createFootstep()
+    local character = player.Character
+    if not character then return end
+
+    local root = character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+
+    local rayParams = RaycastParams.new()
+    rayParams.FilterType = Enum.RaycastFilterType.Exclude
+    rayParams.FilterDescendantsInstances = {character}
+
+    local ray = workspace:Raycast(
+        root.Position,
+        Vector3.new(0, -6, 0),
+        rayParams
+    )
+
+    if not ray then return end
+
+    local step = Instance.new("Part")
+    step.Name = "Footstep"
+    step.Size = Vector3.new(0.8, 0.03, 1.2)
+    step.Anchored = true
+    step.CanCollide = false
+    step.CanTouch = false
+    step.CanQuery = false
+
+    step.Material = Enum.Material.Neon
+    step.Color = _G.color1
+
+    step.CFrame = CFrame.new(
+        ray.Position + Vector3.new(0, 0.03, 0)
+    ) * CFrame.Angles(
+        0,
+        math.rad(root.Orientation.Y),
+        0
+    )
+
+    step.Parent = workspace
+
+    -- След исчезает через 3 секунды
+    task.delay(3, function()
+        if step then
+            step:Destroy()
+        end
+    end)
+end
+
+
+visualtab:Toggle("Footsteps", false, function(value)
+
+    footstepsEnabled = value
+
+    if value then
+
+        lastStepPosition = nil
+
+        stepConnection = RunService.Heartbeat:Connect(function()
+
+            local character = player.Character
+            if not character then return end
+
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            local root = character:FindFirstChild("HumanoidRootPart")
+
+            if not humanoid or not root then return end
+
+            -- Проверяем, что игрок действительно идёт
+            if humanoid.MoveDirection.Magnitude > 0 then
+
+                if not lastStepPosition
+                or (root.Position - lastStepPosition).Magnitude >= 2 then
+
+                    lastStepPosition = root.Position
+
+                    createFootstep()
+
+                end
+
+            end
+
+        end)
+
+    else
+
+        if stepConnection then
+            stepConnection:Disconnect()
+            stepConnection = nil
+        end
+
+    end
+
+end)
+
+		_G.color1 = Color3.new(1,1,1)
+
+		visualtab:Colorpicker("Color",Color3.new(1,1,1),function(value)
+			_G.color1 = value
+		end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local jumpCirclesEnabled = false
+local jumpConnection
+local lastJumpState = false
+
+local selectedCircleColor = "White"
+
+local function createJumpCircle()
+    local character = player.Character
+    if not character then return end
+
+    local root = character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+
+    local rayParams = RaycastParams.new()
+    rayParams.FilterType = Enum.RaycastFilterType.Exclude
+    rayParams.FilterDescendantsInstances = {character}
+
+    local ray = workspace:Raycast(
+        root.Position,
+        Vector3.new(0, -10, 0),
+        rayParams
+    )
+
+    if not ray then return end
+
+    local circle = Instance.new("Part")
+    circle.Name = "JumpCircle"
+    circle.Shape = Enum.PartType.Cylinder
+
+    -- Начинает с маленькой точки
+    circle.Size = Vector3.new(0.08, 0.2, 0.2)
+
+    circle.Anchored = true
+    circle.CanCollide = false
+    circle.CanTouch = false
+    circle.CanQuery = false
+
+    circle.Material = Enum.Material.Neon
+    circle.Color = _G.color
+
+    circle.CFrame =
+        CFrame.new(ray.Position + Vector3.new(0, 0.04, 0))
+        * CFrame.Angles(0, 0, math.rad(90))
+
+    circle.Parent = workspace
+
+    -- Расширяется как волна
+    local expandTween = TweenService:Create(
+        circle,
+        TweenInfo.new(
+            0.5,
+            Enum.EasingStyle.Quad,
+            Enum.EasingDirection.Out
+        ),
+        {
+            Size = Vector3.new(0.08, 6, 6)
+        }
+    )
+
+    expandTween:Play()
+
+    -- Потом исчезает
+    task.delay(0.25, function()
+        if circle and circle.Parent then
+
+            local fadeTween = TweenService:Create(
+                circle,
+                TweenInfo.new(0.5),
+                {
+                    Transparency = 1
+                }
+            )
+
+            fadeTween:Play()
+
+            fadeTween.Completed:Wait()
+
+            if circle then
+                circle:Destroy()
+            end
+
+        end
+    end)
+end
+
+
+visualtab:Toggle("Jump Circles", false, function(value)
+
+    jumpCirclesEnabled = value
+
+    if value then
+
+        jumpConnection = RunService.Heartbeat:Connect(function()
+
+            local character = player.Character
+            if not character then return end
+
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if not humanoid then return end
+
+            local state = humanoid:GetState()
+
+            -- Приземление после прыжка
+            if lastJumpState
+            and (
+                state == Enum.HumanoidStateType.Landed
+                or state == Enum.HumanoidStateType.Running
+            ) then
+
+                createJumpCircle()
+
+            end
+
+            if state == Enum.HumanoidStateType.Freefall
+            or state == Enum.HumanoidStateType.Jumping then
+
+                lastJumpState = true
+
+            else
+
+                lastJumpState = false
+
+            end
+
+        end)
+
+    else
+
+        if jumpConnection then
+            jumpConnection:Disconnect()
+            jumpConnection = nil
+        end
+
+        -- Удаляем все существующие круги
+        for _, v in pairs(workspace:GetChildren()) do
+            if v.Name == "JumpCircle" then
+                v:Destroy()
+            end
+        end
+
+    end
+
+end)
+
+_G.color = Color3.new(1,1,1)
+
+visualtab:Colorpicker("Color",Color3.new(1,1,1),function(value)
+	_G.color = value
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--// CENTER CROSSHAIR
+
+local crosshairEnabled = false
+local crosshair
+local crosshairSize = 3
+_G.color = Color3.new(1, 1, 1)
+
+crosshairtab:Toggle("Crosshair", false, function(value)
+    crosshairEnabled = value
+
+    if value then
+        crosshair = Drawing.new("Circle")
+        crosshair.Radius = crosshairSize
+        crosshair.Filled = true
+        crosshair.Color = _G.color
+        crosshair.Transparency = 1
+        crosshair.Visible = true
+
+        task.spawn(function()
+            while crosshairEnabled and crosshair do
+                local camera = workspace.CurrentCamera
+                local viewportSize = camera.ViewportSize
+
+                crosshair.Position = Vector2.new(
+                    viewportSize.X / 2,
+                    viewportSize.Y / 2
+                )
+
+                task.wait()
+            end
+        end)
+
+    else
+        if crosshair then
+            crosshair:Remove()
+            crosshair = nil
+        end
+    end
+end)
+
+
+crosshairtab:Colorpicker("Crosshair Color", Color3.new(1, 1, 1), function(value)
+    _G.color = value
+
+    if crosshair then
+        crosshair.Color = value
+    end
+end)
+
+
+crosshairtab:Slider("Crosshair Size", 1, 10, 3, function(value)
+    crosshairSize = value
+
+    if crosshair then
+        crosshair.Radius = value
+    end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local SoundService = game:GetService("SoundService")
+
+local sound = Instance.new("Sound")
+sound.Name = "CustomSound"
+sound.Volume = 1
+sound.Looped = false
+sound.Parent = SoundService
+
+soundtab:Textbox("Music ID", "Введи ID звука", function(value)
+
+    local id = tostring(value):match("%d+")
+
+    if not id then
+        return
+    end
+
+    sound:Stop()
+    sound.SoundId = "rbxassetid://" .. id
+
+    task.wait(0.5)
+
+    sound:Play()
+
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+soundtab:Slider("Music Volume", 1, 100, 1, function(value)
+
+    -- 1 = 0.1 Volume
+    -- 100 = 10 Volume
+    sound.Volume = value / 10
+
+end)
+
+
+
+
+
+
+soundtab:Toggle("Auto Replay", false, function(value)
+
+    autoReplay = value
+
+    if not value then
+        sound:Stop()
+    end
+
+end)
+
+sound.Ended:Connect(function()
+
+    if autoReplay then
+        sound:Play()
+    end
+
+end)
+
+
+
+
+
+soundtab:Button("Stop Music", function()
+    sound:Stop()
+end)
+
+
+
+
+
+
+
+
+
+
+
+local hiddenGrass = {}
+
+fpstab:Toggle("Hide Grass", false, function(enabled)
+    if enabled then
+        hiddenGrass = {}
+
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("BasePart") then
+                local c = v.Color
+
+                if c.G > c.R and c.G > c.B and v.Size.Y <= 2 then
+                    hiddenGrass[v] = {
+                        Transparency = v.Transparency,
+                        CanCollide = v.CanCollide
+                    }
+
+                    v.Transparency = 1
+                    v.CanCollide = false
+                end
+            end
+        end
+    else
+        for part, data in pairs(hiddenGrass) do
+            if part and part.Parent then
+                part.Transparency = data.Transparency
+                part.CanCollide = data.CanCollide
+            end
+        end
+
+        hiddenGrass = {}
+    end
+end)
+
+
+
+
+
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+_G.color2 = Color3.new(1,1,1)
+
+local fireEnabled = false
+
+local function removeFire()
+	local character = player.Character
+	if not character then return end
+
+	local root = character:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
+	local aura = root:FindFirstChild("FireAura")
+	if aura then
+		aura:Destroy()
+	end
+
+	_G.FireEmitter = nil
+	_G.FireLight = nil
+end
+
+local function createFire()
+	removeFire()
+
+	local character = player.Character
+	if not character then return end
+
+	local root = character:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
+	local attachment = Instance.new("Attachment")
+	attachment.Name = "FireAura"
+	attachment.Parent = root
+
+	local fire = Instance.new("ParticleEmitter")
+	_G.FireEmitter = fire
+
+	fire.Parent = attachment
+	fire.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+	fire.Color = ColorSequence.new(_G.color2)
+
+	fire.LightEmission = 1
+	fire.LightInfluence = 0
+	fire.Size = NumberSequence.new(1.5,0)
+	fire.Transparency = NumberSequence.new(0.1,1)
+	fire.Lifetime = NumberRange.new(0.5,1)
+	fire.Rate = 120
+	fire.Speed = NumberRange.new(0.5,2)
+	fire.SpreadAngle = Vector2.new(360,360)
+	fire.Rotation = NumberRange.new(0,360)
+	fire.RotSpeed = NumberRange.new(-180,180)
+	fire.Acceleration = Vector3.new(0,2,0)
+	fire.Drag = 2
+
+	-- Свет теперь внутри Attachment
+	local light = Instance.new("PointLight")
+	_G.FireLight = light
+
+	light.Parent = attachment
+	light.Color = _G.color2
+	light.Range = 12
+	light.Brightness = 2
+end
+
+-- Toggle
+visualtab:Toggle("Fire Aura", false, function(state)
+	fireEnabled = state
+
+	if state then
+		createFire()
+	else
+		removeFire()
+	end
+end)
+
+-- ColorPicker
+visualtab:Colorpicker("Fire Color", Color3.new(1,1,1), function(value)
+	_G.color2 = value
+
+	if _G.FireEmitter then
+		_G.FireEmitter.Color = ColorSequence.new(value)
+	end
+
+	if _G.FireLight then
+		_G.FireLight.Color = value
+	end
+end)
+
+player.CharacterAdded:Connect(function()
+	task.wait(1)
+
+	if fireEnabled then
+		createFire()
+	end
+end)
+
+
+
+
+
+
+
+local Players = game:GetService("Players")
+
+local iconEnabled = false
+local connections = {}
+
+local Whitelist = {
+    ["hehehuebwu"] = true,
+    ["sas_prox123"] = true,
+    ["hfgykjg"] = true,
+    ["TGK_Borick"] = true,
+    ["Sasha_skibidysigma"] = true,
+    ["hahahajobd"] = true,
+    ["sviat68687"] = true,
+    ["tim1200347"] = true,
+    ["rXjeqTDkoaa"] = true,
+    ["III0THuK"] = true,
+    ["huydydv"] = true,
+    ["sjcsfcsfc"] = true,
+    ["SiberGGS_X"] = true,
+    ["amowdu2"] = true,
+	["axmed_811811"] = true,
+}
+
+local function RemoveIcons()
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr.Character and plr.Character:FindFirstChild("Head") then
+            local icon = plr.Character.Head:FindFirstChild("ScriptIcon")
+            if icon then
+                icon:Destroy()
+            end
+        end
+    end
+end
+
+local function AddIcon(player)
+    if not iconEnabled then return end
+    if not Whitelist[player.Name] then return end
+
+    local function Setup(character)
+        local head = character:WaitForChild("Head")
+
+        local old = head:FindFirstChild("ScriptIcon")
+        if old then
+            old:Destroy()
+        end
+
+        local gui = Instance.new("BillboardGui")
+        gui.Name = "ScriptIcon"
+        gui.Size = UDim2.new(0, 30, 0, 30)
+        gui.StudsOffset = Vector3.new(0, 2.7, 0)
+        gui.AlwaysOnTop = false -- не видно через стены
+        gui.MaxDistance = 60 -- видно только вблизи
+        gui.Parent = head
+
+        local img = Instance.new("ImageLabel")
+        img.BackgroundTransparency = 1
+        img.Size = UDim2.fromScale(1,1)
+        img.Image = "rbxassetid://99111619026666"
+        img.Parent = gui
+    end
+
+    if player.Character then
+        Setup(player.Character)
+    end
+
+    connections[player] = player.CharacterAdded:Connect(Setup)
+end
+
+visualtab:Toggle("Player Icons", false, function(v)
+    iconEnabled = v
+
+    RemoveIcons()
+
+    if v then
+        for _, plr in ipairs(Players:GetPlayers()) do
+            AddIcon(plr)
+        end
+    else
+        for _, c in pairs(connections) do
+            c:Disconnect()
+        end
+        connections = {}
+    end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    end
+end)
