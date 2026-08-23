@@ -3,13 +3,11 @@ _G.list = {
     ["sas_pro123"] = {m = 12,d=15,h=0},
     ["hehehuebwu"] = {m = 9,d=25,h=0},
     ["hfgykjg"] = {m = 9,d=25,h=0},
-    ["TGK_Borick"] = {m = 1,d=25,h=0},
     ["Sasha_skibidysigma"] = {m = 9,d=25,h=0},
     ["hahahajobd"] = {m = 9,d=25,h=0},
     ["sviat68687"] = {m = 9,d=25,h=0},
     ["tim1200347"] = {m = 9,d=25,h=0},
     ["rXjeqTDkoaa"] = {m = 9,d=25,h=0},
-    ["III0THuK"] = {m = 1,d=25,h=0},
     ["huydydv"] = {m = 9,d=25,h=0},
     ["sjcsfcsfc"] = {m = 9,d=25,h=0},
     ["SiberGGS_X"] = {m = 9,d=25,h=0},
@@ -205,6 +203,64 @@ local skintab = gui:Tab("Skin")
 
 local fpstab = gui:Tab("FPS")
 
+local cfgtab = gui:Tab("CFG")
+
+--// LOCAL CFG
+-- Сохраняет состояния функций между перезаходами в игру.
+-- Требуется executor с поддержкой readfile/writefile/delfile.
+local HttpService = game:GetService("HttpService")
+local CFG_FILE = "SkyVisuals_LocalCFG.json"
+local LocalCFG = {
+    Enabled = false,
+    States = {},
+    Settings = {
+        Time = 12,
+        CrosshairSize = 3,
+        MusicVolume = 1,
+    }
+}
+_G.LocalCFGHandlers = {}
+
+local function CFG_Load()
+    if not (readfile and isfile) then return end
+    local ok, exists = pcall(isfile, CFG_FILE)
+    if not ok or not exists then return end
+
+    local okRead, raw = pcall(readfile, CFG_FILE)
+    if not okRead or not raw or raw == "" then return end
+
+    local okDecode, data = pcall(function()
+        return HttpService:JSONDecode(raw)
+    end)
+    if not okDecode or type(data) ~= "table" then return end
+
+    LocalCFG = data
+    LocalCFG.Enabled = true
+    LocalCFG.States = LocalCFG.States or {}
+    LocalCFG.Settings = LocalCFG.Settings or {}
+end
+
+local function CFG_Save()
+    if not LocalCFG.Enabled or not writefile then return end
+    pcall(function()
+        writefile(CFG_FILE, HttpService:JSONEncode(LocalCFG))
+    end)
+end
+
+local function CFG_Delete()
+    if delfile and isfile then
+        pcall(function()
+            if isfile(CFG_FILE) then
+                delfile(CFG_FILE)
+            end
+        end)
+    end
+    LocalCFG.Enabled = false
+    LocalCFG.States = {}
+end
+
+CFG_Load()
+
 
 
 
@@ -223,7 +279,9 @@ local timeEnabled = false
 local currentTime = 12
 local originalTime = Lighting.ClockTime
 
-visualtab:Toggle("Time Changer", false, function(value)
+local function __cfg_TimeChanger(value)
+    LocalCFG.States["TimeChanger"] = value
+    CFG_Save()
     timeEnabled = value
 
     if timeEnabled then
@@ -232,10 +290,14 @@ visualtab:Toggle("Time Changer", false, function(value)
     else
         Lighting.ClockTime = originalTime
     end
-end)
+end
+_G.LocalCFGHandlers["TimeChanger"] = __cfg_TimeChanger
+visualtab:Toggle("Time Changer", false, __cfg_TimeChanger)
 
 visualtab:Slider("Time", 1, 24, 12, function(value)
     currentTime = value
+    LocalCFG.Settings.Time = value
+    CFG_Save()
 
     if timeEnabled then
         Lighting.ClockTime = value
@@ -246,7 +308,9 @@ end)
 
 local originalMaterials = {}
 
-fpstab:Toggle("Plastic Materials", false, function(value)
+local function __cfg_PlasticMaterials(value)
+    LocalCFG.States["PlasticMaterials"] = value
+    CFG_Save()
 
     if value then
 
@@ -275,13 +339,17 @@ fpstab:Toggle("Plastic Materials", false, function(value)
         originalMaterials = {}
     end
 
-end)
+end
+_G.LocalCFGHandlers["PlasticMaterials"] = __cfg_PlasticMaterials
+fpstab:Toggle("Plastic Materials", false, __cfg_PlasticMaterials)
 
 
 
 local originalShadows = {}
 
-fpstab:Toggle("Remove Shadows", false, function(value)
+local function __cfg_RemoveShadows(value)
+    LocalCFG.States["RemoveShadows"] = value
+    CFG_Save()
 
     if value then
 
@@ -309,12 +377,16 @@ fpstab:Toggle("Remove Shadows", false, function(value)
         originalShadows = {}
     end
 
-end)
+end
+_G.LocalCFGHandlers["RemoveShadows"] = __cfg_RemoveShadows
+fpstab:Toggle("Remove Shadows", false, __cfg_RemoveShadows)
 
 
 local originalLightingEffects = {}
 
-fpstab:Toggle("Remove Light Effects", false, function(value)
+local function __cfg_RemoveLightEffects(value)
+    LocalCFG.States["RemoveLightEffects"] = value
+    CFG_Save()
 
     if value then
 
@@ -352,7 +424,9 @@ fpstab:Toggle("Remove Light Effects", false, function(value)
 
     end
 
-end)
+end
+_G.LocalCFGHandlers["RemoveLightEffects"] = __cfg_RemoveLightEffects
+fpstab:Toggle("Remove Light Effects", false, __cfg_RemoveLightEffects)
 
 
 
@@ -364,7 +438,9 @@ local originalWaterReflectance = Terrain.WaterReflectance
 local originalWaterWaveSize = Terrain.WaterWaveSize
 local originalWaterWaveSpeed = Terrain.WaterWaveSpeed
 
-fpstab:Toggle("Simple Blue Water", false, function(value)
+local function __cfg_SimpleBlueWater(value)
+    LocalCFG.States["SimpleBlueWater"] = value
+    CFG_Save()
 
     if value then
 
@@ -386,7 +462,9 @@ fpstab:Toggle("Simple Blue Water", false, function(value)
 
     end
 
-end)
+end
+_G.LocalCFGHandlers["SimpleBlueWater"] = __cfg_SimpleBlueWater
+fpstab:Toggle("Simple Blue Water", false, __cfg_SimpleBlueWater)
 
 
 
@@ -464,7 +542,9 @@ player.CharacterAdded:Connect(function(character)
     end
 end)
 
-skintab:Toggle("Fake Headless", false, function(v)
+local function __cfg_FakeHeadless(v)
+    LocalCFG.States["FakeHeadless"] = v
+    CFG_Save()
     fakeHeadless = v
 
     local character = player.Character or player.CharacterAdded:Wait()
@@ -474,7 +554,9 @@ skintab:Toggle("Fake Headless", false, function(v)
     else
         removeHeadless(character)
     end
-end)
+end
+_G.LocalCFGHandlers["FakeHeadless"] = __cfg_FakeHeadless
+skintab:Toggle("Fake Headless", false, __cfg_FakeHeadless)
 
 
 
@@ -526,7 +608,9 @@ player.CharacterAdded:Connect(function(character)
     end
 end)
 
-skintab:Toggle("Fake Korblox", false, function(v)
+local function __cfg_FakeKorblox(v)
+    LocalCFG.States["FakeKorblox"] = v
+    CFG_Save()
     korbloxEnabled = v
 
     if v then
@@ -535,7 +619,9 @@ skintab:Toggle("Fake Korblox", false, function(v)
     else
         player:LoadCharacter()
     end
-end)
+end
+_G.LocalCFGHandlers["FakeKorblox"] = __cfg_FakeKorblox
+skintab:Toggle("Fake Korblox", false, __cfg_FakeKorblox)
 
 
 
@@ -636,7 +722,9 @@ end
 
 --// TOGGLE TRAIL
 
-visualtab:Toggle("Trail", false, function(value)
+local function __cfg_Trail(value)
+    LocalCFG.States["Trail"] = value
+    CFG_Save()
 
     trailEnabled = value
 
@@ -646,7 +734,9 @@ visualtab:Toggle("Trail", false, function(value)
         removeTrail()
     end
 
-end)
+end
+_G.LocalCFGHandlers["Trail"] = __cfg_Trail
+visualtab:Toggle("Trail", false, __cfg_Trail)
 
 		_G.color2 = Color3.new(1,1,1)
 
@@ -735,7 +825,9 @@ local function createFootstep()
 end
 
 
-visualtab:Toggle("Footsteps", false, function(value)
+local function __cfg_Footsteps(value)
+    LocalCFG.States["Footsteps"] = value
+    CFG_Save()
 
     footstepsEnabled = value
 
@@ -778,7 +870,9 @@ visualtab:Toggle("Footsteps", false, function(value)
 
     end
 
-end)
+end
+_G.LocalCFGHandlers["Footsteps"] = __cfg_Footsteps
+visualtab:Toggle("Footsteps", false, __cfg_Footsteps)
 
 		_G.color1 = Color3.new(1,1,1)
 
@@ -892,7 +986,9 @@ local function createJumpCircle()
 end
 
 
-visualtab:Toggle("Jump Circles", false, function(value)
+local function __cfg_JumpCircles(value)
+    LocalCFG.States["JumpCircles"] = value
+    CFG_Save()
 
     jumpCirclesEnabled = value
 
@@ -948,7 +1044,9 @@ visualtab:Toggle("Jump Circles", false, function(value)
 
     end
 
-end)
+end
+_G.LocalCFGHandlers["JumpCircles"] = __cfg_JumpCircles
+visualtab:Toggle("Jump Circles", false, __cfg_JumpCircles)
 
 _G.color = Color3.new(1,1,1)
 
@@ -977,7 +1075,9 @@ local crosshair
 local crosshairSize = 3
 _G.color = Color3.new(1, 1, 1)
 
-crosshairtab:Toggle("Crosshair", false, function(value)
+local function __cfg_Crosshair(value)
+    LocalCFG.States["Crosshair"] = value
+    CFG_Save()
     crosshairEnabled = value
 
     if value then
@@ -1008,7 +1108,9 @@ crosshairtab:Toggle("Crosshair", false, function(value)
             crosshair = nil
         end
     end
-end)
+end
+_G.LocalCFGHandlers["Crosshair"] = __cfg_Crosshair
+crosshairtab:Toggle("Crosshair", false, __cfg_Crosshair)
 
 
 crosshairtab:Colorpicker("Crosshair Color", Color3.new(1, 1, 1), function(value)
@@ -1022,6 +1124,8 @@ end)
 
 crosshairtab:Slider("Crosshair Size", 1, 10, 3, function(value)
     crosshairSize = value
+    LocalCFG.Settings.CrosshairSize = value
+    CFG_Save()
 
     if crosshair then
         crosshair.Radius = value
@@ -1093,6 +1197,8 @@ soundtab:Slider("Music Volume", 1, 100, 1, function(value)
     -- 1 = 0.1 Volume
     -- 100 = 10 Volume
     sound.Volume = value / 10
+    LocalCFG.Settings.MusicVolume = sound.Volume
+    CFG_Save()
 
 end)
 
@@ -1101,7 +1207,9 @@ end)
 
 
 
-soundtab:Toggle("Auto Replay", false, function(value)
+local function __cfg_AutoReplay(value)
+    LocalCFG.States["AutoReplay"] = value
+    CFG_Save()
 
     autoReplay = value
 
@@ -1109,7 +1217,9 @@ soundtab:Toggle("Auto Replay", false, function(value)
         sound:Stop()
     end
 
-end)
+end
+_G.LocalCFGHandlers["AutoReplay"] = __cfg_AutoReplay
+soundtab:Toggle("Auto Replay", false, __cfg_AutoReplay)
 
 sound.Ended:Connect(function()
 
@@ -1139,7 +1249,9 @@ end)
 
 local hiddenGrass = {}
 
-fpstab:Toggle("Hide Grass", false, function(enabled)
+local function __cfg_HideGrass(enabled)
+    LocalCFG.States["HideGrass"] = enabled
+    CFG_Save()
     if enabled then
         hiddenGrass = {}
 
@@ -1168,7 +1280,9 @@ fpstab:Toggle("Hide Grass", false, function(enabled)
 
         hiddenGrass = {}
     end
-end)
+end
+_G.LocalCFGHandlers["HideGrass"] = __cfg_HideGrass
+fpstab:Toggle("Hide Grass", false, __cfg_HideGrass)
 
 
 
@@ -1245,7 +1359,9 @@ local function createFire()
 end
 
 -- Toggle
-visualtab:Toggle("Fire Aura", false, function(state)
+local function __cfg_FireAura(state)
+    LocalCFG.States["FireAura"] = state
+    CFG_Save()
 	fireEnabled = state
 
 	if state then
@@ -1253,7 +1369,9 @@ visualtab:Toggle("Fire Aura", false, function(state)
 	else
 		removeFire()
 	end
-end)
+end
+_G.LocalCFGHandlers["FireAura"] = __cfg_FireAura
+visualtab:Toggle("Fire Aura", false, __cfg_FireAura)
 
 -- ColorPicker
 visualtab:Colorpicker("Fire Color", Color3.new(1,1,1), function(value)
@@ -1350,7 +1468,9 @@ local function AddIcon(player)
     connections[player] = player.CharacterAdded:Connect(Setup)
 end
 
-visualtab:Toggle("Player Icons", false, function(v)
+local function __cfg_PlayerIcons(v)
+    LocalCFG.States["PlayerIcons"] = v
+    CFG_Save()
     iconEnabled = v
 
     RemoveIcons()
@@ -1365,6 +1485,60 @@ visualtab:Toggle("Player Icons", false, function(v)
         end
         connections = {}
     end
+end
+_G.LocalCFGHandlers["PlayerIcons"] = __cfg_PlayerIcons
+visualtab:Toggle("Player Icons", false, __cfg_PlayerIcons)
+
+--// LOCAL CFG TOGGLE
+cfgtab:Toggle("Local CFG", LocalCFG.Enabled, function(enabled)
+    LocalCFG.Enabled = enabled
+
+    if enabled then
+        -- При включении сразу создаём/обновляем локальный CFG.
+        CFG_Save()
+    else
+        -- При выключении CFG удаляется.
+        -- После следующего запуска все функции будут снова выключены.
+        CFG_Delete()
+    end
+end)
+
+--// LOAD SAVED FUNCTIONS
+-- Восстанавливаем сохранённые состояния после создания всех Toggle.
+task.defer(function()
+    if not LocalCFG.Enabled then
+        return
+    end
+
+    local s = LocalCFG.Settings or {}
+    local states = LocalCFG.States or {}
+
+    for name, value in pairs(states) do
+        local handler = _G.LocalCFGHandlers[name]
+        if handler and value == true then
+            pcall(handler, true)
+        end
+    end
+
+    -- Восстанавливаем сохранённые настройки.
+    if s.Time then
+        currentTime = s.Time
+        if timeEnabled then
+            Lighting.ClockTime = currentTime
+        end
+    end
+
+    if s.CrosshairSize then
+        crosshairSize = s.CrosshairSize
+        if crosshair then
+            crosshair.Radius = crosshairSize
+        end
+    end
+
+    if s.MusicVolume then
+        sound.Volume = s.MusicVolume
+    end
+
 end)
 
 
