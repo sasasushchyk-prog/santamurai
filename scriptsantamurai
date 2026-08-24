@@ -201,9 +201,12 @@ local crosshairtab = gui:Tab("Crosshair")
 
 local skintab = gui:Tab("Skin")
 
+local customtab = gui:Tab("Custom")
+
 local fpstab = gui:Tab("FPS")
 
 local cfgtab = gui:Tab("CFG")
+
 
 --// LOCAL CFG
 -- Сохраняет состояния функций между перезаходами в игру.
@@ -222,6 +225,8 @@ local LocalCFG = {
 _G.LocalCFGHandlers = {}
 
 local function CFG_Load()
+
+
     if not (readfile and isfile) then return end
     local ok, exists = pcall(isfile, CFG_FILE)
     if not ok or not exists then return end
@@ -274,6 +279,153 @@ end)
 
 
 local Lighting = game:GetService("Lighting")
+
+
+--// CUSTOM SKY
+-- Локальное однотонное небо. Atmosphere не создаётся.
+local RunService = game:GetService("RunService")
+
+local customSkyEnabled = false
+local customSkyColor = Color3.fromRGB(255, 255, 255)
+local customSkyParts = {}
+local customSkyConnection = nil
+local originalFogStart = nil
+local originalFogEnd = nil
+
+local function destroyCustomSky()
+    if customSkyConnection then
+        customSkyConnection:Disconnect()
+        customSkyConnection = nil
+    end
+
+    for _, part in ipairs(customSkyParts) do
+        if part and part.Parent then
+            part:Destroy()
+        end
+    end
+    customSkyParts = {}
+
+    if originalFogStart ~= nil then
+        Lighting.FogStart = originalFogStart
+    end
+    if originalFogEnd ~= nil then
+        Lighting.FogEnd = originalFogEnd
+    end
+end
+
+local function updateCustomSkyColor()
+    for _, part in ipairs(customSkyParts) do
+        if part and part.Parent then
+            part.Color = customSkyColor
+        end
+    end
+end
+
+local function createCustomSky()
+    destroyCustomSky()
+
+    local camera = workspace.CurrentCamera
+    if not camera then return end
+
+    -- Временно убираем Fog только чтобы поверхность неба не превращалась в дымку.
+    -- При выключении возвращаем ровно исходные значения.
+    originalFogStart = Lighting.FogStart
+    originalFogEnd = Lighting.FogEnd
+    Lighting.FogStart = 1000000
+    Lighting.FogEnd = 1000001
+
+    local distance = 500
+    local size = Vector3.new(1000, 1000, 1)
+
+    local faces = {
+        {Vector3.new(0, 0, -distance), CFrame.Angles(0, 0, 0)},
+        {Vector3.new(0, 0, distance), CFrame.Angles(0, math.rad(180), 0)},
+        {Vector3.new(-distance, 0, 0), CFrame.Angles(0, math.rad(90), 0)},
+        {Vector3.new(distance, 0, 0), CFrame.Angles(0, math.rad(-90), 0)},
+        {Vector3.new(0, distance, 0), CFrame.Angles(0, 0, math.rad(90))},
+        {Vector3.new(0, -distance, 0), CFrame.Angles(0, 0, math.rad(-90))},
+    }
+
+    for i, face in ipairs(faces) do
+        local part = Instance.new("Part")
+        part.Name = "CustomSkyFace_" .. i
+        part.Anchored = true
+        part.CanCollide = false
+        part.CanTouch = false
+        part.CanQuery = false
+        part.CastShadow = false
+        part.Material = Enum.Material.Neon
+        part.Transparency = 0
+        part.Color = customSkyColor
+        part.Size = size
+        part.CFrame = CFrame.new(face[1]) * face[2]
+        part.Parent = workspace
+        customSkyParts[#customSkyParts + 1] = part
+    end
+
+    customSkyConnection = RunService.RenderStepped:Connect(function()
+        if not customSkyEnabled then return end
+
+        local currentCamera = workspace.CurrentCamera
+        if not currentCamera then return end
+
+        local pos = currentCamera.CFrame.Position
+        local positions = {
+            Vector3.new(0, 0, -distance),
+            Vector3.new(0, 0, distance),
+            Vector3.new(-distance, 0, 0),
+            Vector3.new(distance, 0, 0),
+            Vector3.new(0, distance, 0),
+            Vector3.new(0, -distance, 0),
+        }
+
+        for i, part in ipairs(customSkyParts) do
+            if part and part.Parent then
+                part.CFrame = CFrame.new(pos + positions[i]) * faces[i][2]
+            end
+        end
+    end)
+end
+
+local savedSkyColor = LocalCFG.Settings and LocalCFG.Settings.CustomSkyColor
+if type(savedSkyColor) == "table" then
+    customSkyColor = Color3.new(
+        tonumber(savedSkyColor.R) or 1,
+        tonumber(savedSkyColor.G) or 1,
+        tonumber(savedSkyColor.B) or 1
+    )
+end
+
+local function __cfg_CustomSky(value)
+    customSkyEnabled = value == true
+    LocalCFG.States["CustomSky"] = customSkyEnabled
+    CFG_Save()
+
+    if customSkyEnabled then
+        createCustomSky()
+    else
+        destroyCustomSky()
+    end
+end
+
+_G.LocalCFGHandlers["CustomSky"] = __cfg_CustomSky
+customtab:Toggle("Custom Sky", false, __cfg_CustomSky)
+
+customtab:Colorpicker("Sky Color", customSkyColor, function(value)
+    customSkyColor = value
+
+    LocalCFG.Settings.CustomSkyColor = {
+        R = value.R,
+        G = value.G,
+        B = value.B
+    }
+    CFG_Save()
+
+    if customSkyEnabled then
+        updateCustomSkyColor()
+    end
+end)
+
 
 local timeEnabled = false
 local currentTime = 12
@@ -1512,6 +1664,13 @@ task.defer(function()
 
     local s = LocalCFG.Settings or {}
     local states = LocalCFG.States or {}
+
+    if s.CustomSkyColor then
+        local c = s.CustomSkyColor
+        if type(c) == "table" and c.R and c.G and c.B then
+            customSkyColor = Color3.new(c.R, c.G, c.B)
+        end
+    end
 
     for name, value in pairs(states) do
         local handler = _G.LocalCFGHandlers[name]
