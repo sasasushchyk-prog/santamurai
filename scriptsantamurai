@@ -284,13 +284,6 @@ CFG_Load()
 
 
 
-local exittab = gui:Tab("Exit")
-exittab:Button("Close Script", function()
-    game:GetService("Players").LocalPlayer:Kick("Close  " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name .. "")
-end)
-
-
-
 local Lighting = game:GetService("Lighting")
 
 
@@ -448,6 +441,245 @@ customtab:Colorpicker("Sky Color", customSkyColor, function(value)
         updateCustomSkyColor()
     end
 end)
+
+----------------------------------------------------------------
+--// PARTICLES
+-- Красивые локальные частицы с выбором типа и цвета.
+----------------------------------------------------------------
+
+local particlesEnabled = false
+local particlesFolder = nil
+local particlesConnection = nil
+local particleTimer = 0
+
+local PARTICLE_LIMIT = 70
+local PARTICLE_SPAWN_DELAY = 0.06
+
+local particleColor = Color3.fromRGB(255, 255, 255)
+local particleType = "Stars"
+
+local particleTypes = {
+    ["Stars"] = {
+        "✦", "✧", "✶", "✷", "✸"
+    },
+    ["Dots"] = {
+        "•", "·", "∙", "●"
+    },
+    ["Hearts"] = {
+        "♥", "♡"
+    },
+    ["Snow"] = {
+        "❄", "❅", "❆"
+    },
+    ["Sparkles"] = {
+        "✺", "✹", "✵", "✴"
+    }
+}
+
+local function destroyParticles()
+    if particlesConnection then
+        particlesConnection:Disconnect()
+        particlesConnection = nil
+    end
+
+    if particlesFolder then
+        particlesFolder:Destroy()
+        particlesFolder = nil
+    end
+end
+
+local function createParticle()
+    if not particlesEnabled or not particlesFolder then
+        return
+    end
+
+    local camera = workspace.CurrentCamera
+    if not camera then
+        return
+    end
+
+    if #particlesFolder:GetChildren() >= PARTICLE_LIMIT then
+        return
+    end
+
+    local star = Instance.new("BillboardGui")
+    star.Name = "SkyParticle"
+    star.AlwaysOnTop = true
+    star.LightInfluence = 0
+    star.Size = UDim2.fromOffset(math.random(12, 27), math.random(12, 27))
+    star.MaxDistance = 250
+    star.Parent = particlesFolder
+
+    local label = Instance.new("TextLabel")
+    label.BackgroundTransparency = 1
+    label.Size = UDim2.fromScale(1, 1)
+
+    local list = particleTypes[particleType] or particleTypes.Stars
+    label.Text = list[math.random(1, #list)]
+
+    label.TextColor3 = particleColor
+    label.TextTransparency = 1
+    label.Font = Enum.Font.GothamBold
+    label.TextScaled = true
+    label.Parent = star
+
+    local startPosition = camera.CFrame.Position + Vector3.new(
+        math.random(-45, 45),
+        math.random(-18, 30),
+        math.random(-45, 45)
+    )
+
+    local endPosition = startPosition + Vector3.new(
+        math.random(-5, 5),
+        math.random(8, 20),
+        math.random(-5, 5)
+    )
+
+    star.StudsOffsetWorldSpace = startPosition
+
+    local startTime = os.clock()
+    local lifeTime = math.random(20, 35) / 10
+    local fadeInTime = 0.35
+    local rotationSpeed = math.random(-120, 120)
+
+    task.spawn(function()
+        while star.Parent and particlesEnabled do
+            local now = os.clock()
+            local elapsed = now - startTime
+            local alpha = math.clamp(elapsed / lifeTime, 0, 1)
+
+            star.StudsOffsetWorldSpace = startPosition:Lerp(endPosition, alpha)
+            label.Rotation = (now - startTime) * rotationSpeed
+
+            if now - startTime < fadeInTime then
+                label.TextTransparency =
+                    1 - ((now - startTime) / fadeInTime)
+            elseif alpha > 0.72 then
+                local fadeAlpha = (alpha - 0.72) / 0.28
+                label.TextTransparency = math.clamp(fadeAlpha, 0, 1)
+            else
+                label.TextTransparency = 0
+            end
+
+            -- Цвет обновляется сразу, если пользователь его меняет.
+            label.TextColor3 = particleColor
+
+            if alpha >= 1 then
+                break
+            end
+
+            RunService.RenderStepped:Wait()
+        end
+
+        if star and star.Parent then
+            star:Destroy()
+        end
+    end)
+end
+
+local function createParticles()
+    destroyParticles()
+
+    particlesFolder = Instance.new("Folder")
+    particlesFolder.Name = "SkyVisualsParticles"
+    particlesFolder.Parent = workspace
+
+    particleTimer = 0
+
+    particlesConnection = RunService.RenderStepped:Connect(function(deltaTime)
+        if not particlesEnabled then
+            return
+        end
+
+        particleTimer = particleTimer + deltaTime
+
+        if particleTimer >= PARTICLE_SPAWN_DELAY then
+            particleTimer = 0
+
+            createParticle()
+
+            if math.random(1, 4) == 1 then
+                createParticle()
+            end
+        end
+    end)
+
+    for _ = 1, 20 do
+        createParticle()
+    end
+end
+
+local function __cfg_Particles(value)
+    particlesEnabled = value == true
+    LocalCFG.States["Particles"] = particlesEnabled
+    CFG_Save()
+
+    if particlesEnabled then
+        createParticles()
+    else
+        destroyParticles()
+    end
+end
+
+_G.LocalCFGHandlers["Particles"] = __cfg_Particles
+customtab:Toggle("Particles", false, __cfg_Particles)
+
+-- Выбор типа частиц
+customtab:Dropdown("Particle Type", {
+    "Stars",
+    "Dots",
+    "Hearts",
+    "Snow",
+    "Sparkles"
+}, function(value)
+    if particleTypes[value] then
+        particleType = value
+        LocalCFG.Settings.ParticleType = value
+        CFG_Save()
+
+        if particlesEnabled then
+            createParticles()
+        end
+    end
+end)
+
+-- Выбор цвета частиц
+customtab:Colorpicker("Particle Color", particleColor, function(value)
+    particleColor = value
+
+    LocalCFG.Settings.ParticleColor = {
+        R = value.R,
+        G = value.G,
+        B = value.B
+    }
+    CFG_Save()
+
+    if particlesFolder then
+        for _, object in ipairs(particlesFolder:GetChildren()) do
+            local label = object:FindFirstChildOfClass("TextLabel")
+            if label then
+                label.TextColor3 = value
+            end
+        end
+    end
+end)
+
+-- Загружаем сохранённые настройки частиц.
+do
+    local savedType = LocalCFG.Settings and LocalCFG.Settings.ParticleType
+    if type(savedType) == "string" and particleTypes[savedType] then
+        particleType = savedType
+    end
+
+    local savedColor = LocalCFG.Settings and LocalCFG.Settings.ParticleColor
+    if type(savedColor) == "table" then
+        particleColor = Color3.new(
+            tonumber(savedColor.R) or 1,
+            tonumber(savedColor.G) or 1,
+            tonumber(savedColor.B) or 1
+        )
+    end
+end
 
 
 local timeEnabled = false
