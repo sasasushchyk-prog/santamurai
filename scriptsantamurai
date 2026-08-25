@@ -27,21 +27,7 @@ _G.list = {
 
 
 
-local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
 
---// KICK PLAYERS FROM _G.list
--- Игроки, чьи имена есть в _G.list, будут кикнуты без проверки даты/времени.
-task.spawn(function()
-    while task.wait(1) do
-        for name, _ in pairs(_G.list) do
-            local target = Players:FindFirstChild(name)
-            if target then
-                target:Kick("Please buy the script")
-            end
-        end
-    end
-end)
 
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
