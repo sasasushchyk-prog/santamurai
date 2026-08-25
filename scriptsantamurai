@@ -30,6 +30,19 @@ _G.list = {
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
+--// KICK PLAYERS FROM _G.list
+-- Игроки, чьи имена есть в _G.list, будут кикнуты без проверки даты/времени.
+task.spawn(function()
+    while task.wait(1) do
+        for name, _ in pairs(_G.list) do
+            local target = Players:FindFirstChild(name)
+            if target then
+                target:Kick("Please buy the script")
+            end
+        end
+    end
+end)
+
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 
@@ -334,16 +347,26 @@ local function createCustomSky()
     Lighting.FogStart = 1000000
     Lighting.FogEnd = 1000001
 
-    local distance = 500
-    local size = Vector3.new(1000, 1000, 1)
+    -- Большой куб вокруг камеры. Размер с запасом убирает щели
+    -- при взгляде вверх/вниз и при движении камеры.
+    local distance = 1000
+    local faceSize = 2200
+    local size = Vector3.new(faceSize, faceSize, 1)
 
+    -- Все 6 граней должны быть правильно ориентированы.
+    -- ВАЖНО: верх/низ вращаются по X, а не по Z.
     local faces = {
+        -- Front / Back
         {Vector3.new(0, 0, -distance), CFrame.Angles(0, 0, 0)},
         {Vector3.new(0, 0, distance), CFrame.Angles(0, math.rad(180), 0)},
+
+        -- Left / Right
         {Vector3.new(-distance, 0, 0), CFrame.Angles(0, math.rad(90), 0)},
         {Vector3.new(distance, 0, 0), CFrame.Angles(0, math.rad(-90), 0)},
-        {Vector3.new(0, distance, 0), CFrame.Angles(0, 0, math.rad(90))},
-        {Vector3.new(0, -distance, 0), CFrame.Angles(0, 0, math.rad(-90))},
+
+        -- Top / Bottom
+        {Vector3.new(0, distance, 0), CFrame.Angles(math.rad(90), 0, 0)},
+        {Vector3.new(0, -distance, 0), CFrame.Angles(math.rad(-90), 0, 0)},
     }
 
     for i, face in ipairs(faces) do
