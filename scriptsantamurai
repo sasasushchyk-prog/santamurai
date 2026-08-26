@@ -22,13 +22,6 @@ _G.list = {
 
 
 
-
-
-
-
-
-
-
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 
