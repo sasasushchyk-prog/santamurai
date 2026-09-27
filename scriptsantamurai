@@ -1,24 +1,4 @@
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local HttpService = game:GetService("HttpService")
 
-_G.Players = Players
-
-_G.list = {
-    ["kipr987"] = {m = 10,d=15,h=0},
-    ["sas_pro123"] = {m = 12,d=15,h=0},
-    ["hehehuebwu"] = {m = 9,d=25,h=0},
-    ["hfgykjg"] = {m = 9,d=25,h=0},
-    ["Sasha_skibidysigma"] = {m = 9,d=25,h=0},
-    ["hahahajobd"] = {m = 9,d=25,h=0},
-    ["sviat68687"] = {m = 9,d=25,h=0},
-    ["tim1200347"] = {m = 9,d=25,h=0},
-    ["rXjeqTDkoaa"] = {m = 9,d=25,h=0},
-    ["huydydv"] = {m = 9,d=25,h=0},
-    [""] = {m = 9,d=25,h=0},
-    ["SiberGGS_X"] = {m = 9,d=25,h=0},
-    ["amowdu2"] = {m = 9,d=25,h=0},
-}
 
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
